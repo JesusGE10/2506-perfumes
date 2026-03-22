@@ -32,7 +32,7 @@ export default function CatalogFilters({ total }: { total: number }) {
         next.set(key, value);
         next.delete('page'); // reset to page 1 on filter change
       }
-      router.push(`/productos?${next.toString()}`);
+      router.push(`/catalogo?${next.toString()}`);
     },
     [params, router]
   );

@@ -17,7 +17,7 @@ export default function CartPage() {
         <span className={styles.emptyIcon}>◎</span>
         <h2>Tu carrito está vacío</h2>
         <p className="text-muted">Explora nuestro catálogo y añade fragancias a tu carrito.</p>
-        <Link href="/productos" className="btn btn-primary btn-lg">
+        <Link href="/catalogo" className="btn btn-primary btn-lg">
           Ver catálogo
         </Link>
       </div>
@@ -54,7 +54,7 @@ export default function CartPage() {
               {/* Info */}
               <div className={styles.itemInfo}>
                 <p className={styles.itemBrand}>{item.perfume.marca.nombre}</p>
-                <Link href={`/productos/${item.perfume.slug}`} className={styles.itemName}>
+                <Link href={`/catalogo/${item.perfume.slug}`} className={styles.itemName}>
                   {item.perfume.nombre}
                 </Link>
                 <p className={styles.itemSize}>{item.presentacion.tamano_ml}ml</p>

@@ -49,7 +49,7 @@ export default function ConfirmacionPage({
         </p>
       </div>
       <div style={{ display: 'flex', gap: 'var(--spacing-md)', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <Link href="/productos" className="btn btn-primary">
+        <Link href="/catalogo" className="btn btn-primary">
           Seguir comprando
         </Link>
         <Link href="/" className="btn btn-ghost">
