@@ -1,0 +1,2 @@
+﻿'bois-sauvage': '/productos/perfume_dark.png',
+'santal-royal': '/productos/perfume_oud.png',

@@ -113,7 +113,7 @@ export default function CartPage() {
           <Link href="/checkout" className={`btn btn-primary ${styles.checkoutBtn}`}>
             Proceder al Checkout
           </Link>
-          <Link href="/productos" className={`btn btn-ghost ${styles.continueBtn}`}>
+          <Link href="/catalogo" className={`btn btn-ghost ${styles.continueBtn}`}>
             Seguir comprando
           </Link>
         </div>

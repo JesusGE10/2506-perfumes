@@ -28,7 +28,7 @@ export default function ProductCard({ product }: Props) {
   };
 
   return (
-    <Link href={`/productos/${product.slug}`} className={styles.card}>
+    <Link href={`/catalogo/${product.slug}`} className={styles.card}>
       {/* Image */}
       <div className={styles.imageWrapper}>
         {product.imagen_principal ? (
@@ -40,7 +40,13 @@ export default function ProductCard({ product }: Props) {
             sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
           />
         ) : (
-          <div className={styles.imagePlaceholder}>✦</div>
+          <Image 
+            src="/logo-crema.png" 
+            alt="Perfumes 2506" 
+            fill 
+            className={styles.imagePlaceholderImg} 
+            sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+          />
         )}
         <div className={styles.badges}>
           {product.es_nuevo && <span className="badge badge-new">Nuevo</span>}

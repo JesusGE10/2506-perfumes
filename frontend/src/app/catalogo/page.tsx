@@ -51,16 +51,10 @@ export default async function CatalogPage({
   const currentPage = parseInt(params.page ?? '1');
 
   return (
-    <div className="container section">
-      {/* Header */}
-      <div className={styles.header}>
-        <h1>Catálogo de Perfumes</h1>
-        <p className="text-muted">
-          Fragancias de autor, nicho y árabes — selección curada
-        </p>
-      </div>
-
-      <div className="divider" />
+    <section className="section">
+      <div className="container">
+        {/* SEO Title (Visually Hidden for Luxury UI minimalism) */}
+        <h1 style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>Catálogo de Perfumes</h1>
 
       {/* Filters */}
       <Suspense>
@@ -82,7 +76,7 @@ export default async function CatalogPage({
               {Array.from({ length: data.pages }, (_, i) => i + 1).map((p) => (
                 <a
                   key={p}
-                  href={`/productos?${new URLSearchParams({ ...params, page: String(p) })}`}
+                  href={`/catalogo?${new URLSearchParams({ ...params, page: String(p) })}`}
                   className={`${styles.pageBtn} ${p === currentPage ? styles.pageBtnActive : ''}`}
                 >
                   {p}
@@ -96,11 +90,12 @@ export default async function CatalogPage({
           <span className={styles.emptyIcon}>◎</span>
           <h3>No se encontraron perfumes</h3>
           <p>Intenta con otros filtros o explora el catálogo completo.</p>
-          <a href="/productos" className="btn btn-secondary">
+          <a href="/catalogo" className="btn btn-secondary">
             Ver todos los perfumes
           </a>
         </div>
       )}
-    </div>
+      </div>
+    </section>
   );
 }

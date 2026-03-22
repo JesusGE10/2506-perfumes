@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Perfumería Fina — Fragancias de Autor y Nicho',
@@ -19,28 +20,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>
+      <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Navbar />
-        <main style={{ paddingTop: 'var(--nav-height)' }}>
+        <main style={{ paddingTop: 'var(--nav-height)', flex: 1 }}>
           {children}
         </main>
-        <footer style={{
-          borderTop: '1px solid var(--color-border)',
-          padding: '40px 0',
-          marginTop: '80px',
-          textAlign: 'center',
-          color: 'var(--color-text-subtle)',
-          fontSize: '0.8rem',
-          letterSpacing: '0.05em',
-        }}>
-          <div className="container">
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--color-gold)', marginBottom: '8px' }}>
-              ✦ Perfumería Fina
-            </p>
-            <p>Fragancias de autor · Nicho · Árabes</p>
-            <p style={{ marginTop: '8px' }}>© {new Date().getFullYear()} Todos los derechos reservados</p>
-          </div>
-        </footer>
+        <Footer />
       </body>
     </html>
   );

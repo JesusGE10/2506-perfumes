@@ -159,6 +159,13 @@ class Perfume(Base):
             if pn.nota is not None
         ]
 
+    @property
+    def imagen_principal(self) -> str | None:
+        if not self.imagenes:
+            return None
+        principal = next((img.url for img in self.imagenes if img.es_principal), None)
+        return principal or self.imagenes[0].url
+
 
 class PerfumeNota(Base):
     """Pivot table linking perfumes to olfactive notes with position type."""

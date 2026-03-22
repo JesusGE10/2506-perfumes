@@ -5,6 +5,22 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import Image from 'next/image';
+import { Lock, Truck, ShieldCheck, MessageCircle, Landmark, Smartphone } from 'lucide-react';
+
+const BinanceIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 8.35L8.35 12L12 15.65L15.65 12L12 8.35ZM12 1.34L6 7.34L8.35 9.69L12 6.04L15.65 9.69L18 7.34L12 1.34ZM12 22.66L18 16.66L15.65 14.31L12 17.96L8.35 14.31L6 16.66L12 22.66ZM1.34 12L4.65 8.69L7 11.04L4.65 13.39L1.34 12ZM22.66 12L19.35 15.31L17 12.96L19.35 10.61L22.66 12Z"/>
+  </svg>
+);
+
+const ZelleIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 7h12L6 17h12" />
+    <path d="M12 3v4" />
+    <path d="M12 17v4" />
+  </svg>
+);
 import { useCartStore } from '@/store/cartStore';
 import apiFetch from '@/lib/api';
 import type { CheckoutCreateRequest, PedidoResponse, ZonaEnvioResponse } from '@/lib/types';
@@ -17,7 +33,7 @@ const ESTADOS_VENEZUELA = [
 const schema = z.object({
   cliente_nombre: z.string().min(2, 'Ingresa tu nombre completo'),
   cliente_telefono: z.string().min(10, 'Ingresa un número válido'),
-  tipo_envio: z.enum(['delivery', 'nacional'], { errorMap: () => ({ message: 'Selecciona una modalidad' }) }),
+  tipo_envio: z.enum(['delivery', 'nacional'], { required_error: 'Selecciona una modalidad', invalid_type_error: 'Selecciona una modalidad' }),
   direccion: z.string().optional(),
   estado: z.string().optional(),
 }).superRefine((data, ctx) => {
@@ -141,7 +157,7 @@ export default function CheckoutPage() {
   if (items.length === 0) return null;
 
   return (
-    <div className="container section">
+    <div className="container section" style={{ paddingLeft: '5vw', paddingRight: '5vw' }}>
       <div className={styles.header}>
         <h1>Checkout</h1>
         <p className="text-muted">Completa tu información de envío para finalizar el pedido.</p>
@@ -149,7 +165,7 @@ export default function CheckoutPage() {
 
       <div className={styles.layout}>
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <form id="checkout-form" onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>Información de contacto</legend>
 
@@ -225,16 +241,20 @@ export default function CheckoutPage() {
 
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>Métodos de pago aceptados</legend>
-            <p className="text-muted" style={{ marginBottom: '0.5rem', fontSize: '13px' }}>
-              El pago se coordinará vía WhatsApp tras confirmar tu pedido.
-            </p>
-            <ul className={styles.infoList}>
-              <li>📱 Pago móvil</li>
-              <li>📲 Zelle</li>
-              <li>🟡 Binance Pay</li>
-              <li>💵 Efectivo al recibir (Solo Caracas)</li>
-              <li>🏦 Transferencias bancarias</li>
-            </ul>
+            <div className={styles.paymentBadges}>
+              <div className={styles.paymentBadge}><Smartphone size={16} /> Pago Móvil</div>
+              <div className={styles.paymentBadge}><Landmark size={16} /> Transferencia Bancaria</div>
+              <div className={styles.paymentBadge}><BinanceIcon size={16} /> Binance Pay</div>
+              <div className={styles.paymentBadge}><ZelleIcon size={16} /> Zelle</div>
+            </div>
+
+            <div className={styles.waCallout}>
+              <MessageCircle className={styles.waCalloutIcon} size={20} />
+              <div className={styles.waCalloutText}>
+                <strong>El pago se coordinará vía WhatsApp</strong>
+                Al confirmar tu compra, procesaremos tu orden y conversaremos personalmente para acordar el pago y el envío.
+              </div>
+            </div>
           </fieldset>
 
           {error && (
@@ -242,14 +262,6 @@ export default function CheckoutPage() {
               <strong>Error:</strong> {error}
             </div>
           )}
-
-          <button
-            type="submit"
-            className={`btn btn-primary btn-lg ${styles.submitBtn}`}
-            disabled={submitting}
-          >
-            {submitting ? 'Procesando...' : '✓ Confirmar pedido vía WhatsApp'}
-          </button>
         </form>
 
         {/* Order Summary */}
@@ -257,7 +269,16 @@ export default function CheckoutPage() {
           <h3 className={styles.summaryTitle}>Tu pedido</h3>
           {items.map((item) => (
             <div key={item.presentacion.id} className={styles.summaryItem}>
-              <div className={styles.summaryItemInfo}>
+              <div className={styles.summaryItemImageWrapper}>
+                <Image 
+                  src={item.perfume.imagen_principal || '/logo-crema.png'} 
+                  alt={item.perfume.nombre} 
+                  fill 
+                  className={styles.summaryItemImage}
+                  unoptimized
+                />
+              </div>
+              <div className={styles.summaryItemContent}>
                 <span className={styles.summaryItemName}>{item.perfume.nombre}</span>
                 <span className={styles.summaryItemSub}>
                   {item.presentacion.tamano_ml}ml × {item.cantidad}
@@ -287,6 +308,32 @@ export default function CheckoutPage() {
           <p className={styles.waNote}>
             Al confirmar, se abrirá WhatsApp con el resumen de tu pedido para coordinarlo con nosotros.
           </p>
+
+          <div className={styles.checkoutActions}>
+            <button
+              type="submit"
+              form="checkout-form"
+              className={`btn btn-primary btn-lg ${styles.submitBtn}`}
+              disabled={submitting}
+            >
+              {submitting ? 'Procesando...' : '✓ Confirmar pedido'}
+            </button>
+          </div>
+
+          <div className={styles.trustBadges}>
+            <div className={styles.trustBadge}>
+              <Lock size={18} />
+              <span>Compra 100% Segura y Protegida</span>
+            </div>
+            <div className={styles.trustBadge}>
+              <Truck size={18} />
+              <span>Llegamos a todo el territorio Nacional</span>
+            </div>
+            <div className={styles.trustBadge}>
+              <ShieldCheck size={18} />
+              <span>Garantía de Calidad y Autenticidad</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

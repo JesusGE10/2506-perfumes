@@ -109,11 +109,13 @@ h4 { font-size: 1.1rem; }
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--spacing-lg);
 }
-@media (min-width: 768px) { .container { padding: 0 var(--spacing-lg); } }
-.section    { padding: var(--spacing-xl) 0; }
-.section-lg { padding: var(--spacing-2xl) 0; }
+@media (min-width: 768px) { .container { padding: 0 var(--spacing-xl); } }
+@media (min-width: 1024px) { .container { padding: 0 var(--spacing-2xl); } }
+
+.section    { padding: var(--spacing-2xl) 0; }
+.section-lg { padding: 120px 0; }
 
 /* ─── Card ───────────────────────────────────────────────────────────────── */
 .card {

@@ -1,0 +1,142 @@
+.footer {
+  background: var(--color-primary);
+  color: #fff;
+  padding: var(--spacing-2xl) 0 var(--spacing-md);
+  margin-top: auto;
+}
+
+.topSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+@media (min-width: 768px) {
+  .topSection {
+    grid-template-columns: minmax(150px, 1fr) 2fr 1fr;
+    gap: var(--spacing-2xl);
+    align-items: flex-start;
+  }
+}
+
+/* Left: Branding */
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-align: center;
+}
+
+.logoWrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.logo {
+  object-fit: contain;
+}
+
+.brandName {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+/* Center & Right Column styles */
+.centerCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.colTitle {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #cca38d; /* Crema */
+  margin-bottom: var(--spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: var(--spacing-md);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+}
+
+.contactItem .icon {
+  display: flex;
+  align-items: center;
+  color: #cca38d;
+}
+
+.socialRow {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  justify-content: center;
+}
+
+.socialLink {
+  color: #cca38d;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.socialLink:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  justify-self: center;
+}
+
+.rightCol a {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: var(--spacing-sm);
+  text-decoration: none;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+  transform-origin: left center;
+}
+
+.rightCol a:hover {
+  color: #cca38d;
+  transform: scale(1.05);
+}
+
+/* Bottom section */
+.bottomSection {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: var(--spacing-md);
+  text-align: center;
+}
+
+.bottomSection p {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}

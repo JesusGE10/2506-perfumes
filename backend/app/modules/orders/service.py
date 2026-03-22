@@ -231,6 +231,71 @@ async def get_order_by_id(db: AsyncSession, order_id: uuid.UUID) -> Pedido:
     return order
 
 
+async def confirm_order(db: AsyncSession, order_id: uuid.UUID) -> Pedido:
+    """
+    Confirms a PENDIENTE order:
+    1. Changes status to CONFIRMADO.
+    2. Decrements stock for each item presentation.
+    """
+    stmt = (
+        select(Pedido)
+        .options(joinedload(Pedido.items))
+        .where(Pedido.id == order_id)
+    )
+    result = await db.execute(stmt)
+    order = result.unique().scalar_one_or_none()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    if order.estado != EstadoPedidoEnum.PENDIENTE:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot confirm order in state: {order.estado}"
+        )
+
+    # Decrement stock
+    for item in order.items:
+        pres_stmt = select(Presentacion).where(Presentacion.id == item.presentacion_id)
+        pres_res = await db.execute(pres_stmt)
+        pres = pres_res.scalar_one_or_none()
+        if pres:
+            if pres.stock < item.cantidad:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Not enough stock for {item.perfume_nombre} ({item.tamano_ml}ml). Available: {pres.stock}, Requested: {item.cantidad}"
+                )
+            pres.stock -= item.cantidad
+
+    order.estado = EstadoPedidoEnum.CONFIRMADO
+    await db.commit()
+    await db.refresh(order)
+    return order
+
+
+async def discard_order(db: AsyncSession, order_id: uuid.UUID) -> Pedido:
+    """
+    Discards a PENDIENTE order by cancelling it, leaving stock untouched.
+    """
+    stmt = select(Pedido).where(Pedido.id == order_id)
+    result = await db.execute(stmt)
+    order = result.scalar_one_or_none()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    if order.estado != EstadoPedidoEnum.PENDIENTE:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot discard order in state: {order.estado}"
+        )
+
+    order.estado = EstadoPedidoEnum.CANCELADO
+    await db.commit()
+    await db.refresh(order)
+    return order
+
+
 async def list_orders(
     db: AsyncSession,
     estado: EstadoPedidoEnum | None = None,

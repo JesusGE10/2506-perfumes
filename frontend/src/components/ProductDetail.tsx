@@ -57,9 +57,13 @@ export default function ProductDetail({ product }: { product: PerfumeDetailRespo
               sizes="(max-width:768px) 100vw, 50vw"
             />
           ) : (
-            <div className={styles.imgPlaceholder}>
-              <span>✦</span>
-            </div>
+            <Image 
+              src="/logo-crema.png" 
+              alt="Perfumes 2506" 
+              fill 
+              className={styles.imgPlaceholderObj} 
+              sizes="(max-width:768px) 100vw, 50vw"
+            />
           )}
         </div>
         {product.imagenes.length > 1 && (

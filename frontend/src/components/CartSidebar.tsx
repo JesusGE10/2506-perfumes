@@ -84,7 +84,13 @@ export default function CartSidebar({ open, onClose }: Props) {
                       className={styles.thumbImg}
                     />
                   ) : (
-                    <div className={styles.thumbPlaceholder}>✦</div>
+                    <Image 
+                      src="/logo-crema.png" 
+                      alt="Perfumes 2506" 
+                      fill 
+                      sizes="80px" 
+                      className={styles.thumbPlaceholderImg} 
+                    />
                   )}
                 </div>
 
@@ -100,21 +106,37 @@ export default function CartSidebar({ open, onClose }: Props) {
                     </p>
                   </div>
 
-                  {/* Qty stepper */}
-                  <div className={styles.qty}>
+                  {/* Qty stepper & Remove */}
+                  <div className={styles.itemActions}>
+                    <div className={styles.qty}>
+                      <button
+                        className={styles.qtyBtn}
+                        onClick={() => updateQuantity(item.presentacion.id, item.cantidad - 1)}
+                        disabled={item.cantidad <= 1}
+                      >
+                        −
+                      </button>
+                      <span className={styles.qtyNum}>{item.cantidad}</span>
+                      <button
+                        className={styles.qtyBtn}
+                        onClick={() => updateQuantity(item.presentacion.id, item.cantidad + 1)}
+                        disabled={item.cantidad >= item.presentacion.stock}
+                      >
+                        +
+                      </button>
+                    </div>
                     <button
-                      className={styles.qtyBtn}
-                      onClick={() => updateQuantity(item.presentacion.id, item.cantidad - 1)}
+                      className={styles.removeItemBtn}
+                      onClick={() => removeItem(item.presentacion.id)}
+                      aria-label="Eliminar producto"
+                      title="Eliminar producto"
                     >
-                      −
-                    </button>
-                    <span className={styles.qtyNum}>{item.cantidad}</span>
-                    <button
-                      className={styles.qtyBtn}
-                      onClick={() => updateQuantity(item.presentacion.id, item.cantidad + 1)}
-                      disabled={item.cantidad >= item.presentacion.stock}
-                    >
-                      +
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
                     </button>
                   </div>
                 </div>

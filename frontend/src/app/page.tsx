@@ -24,7 +24,7 @@ export default async function HomePage() {
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>Descubre Tu Esencia</h1>
           <p className={styles.heroSubtitle}>Fragancias exclusivas que definen tu presencia</p>
-          <Link href="/productos" className={styles.heroBtn}>
+          <Link href="/catalogo" className={styles.heroBtn}>
             Ver Colección
           </Link>
         </div>
@@ -36,7 +36,7 @@ export default async function HomePage() {
           <div className="container">
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Nuestras Fragancias</h2>
-              <Link href="/productos" className={styles.seeAll}>Ver todo →</Link>
+              <Link href="/catalogo" className={styles.seeAll}>Ver todo →</Link>
             </div>
             <div className={styles.grid}>
               {featured.map((p) => (
@@ -73,7 +73,7 @@ export default async function HomePage() {
           <div className="container">
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Ofertas Exclusivas</h2>
-              <Link href="/productos?sort_by=newest" className={styles.seeAll}>Ver todo →</Link>
+              <Link href="/catalogo?sort_by=newest" className={styles.seeAll}>Ver todo →</Link>
             </div>
             <div className={styles.grid}>
               {newest.slice(0, 4).map((p) => (
@@ -84,42 +84,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Footer strip matching reference */}
-      <footer className={styles.footerStrip}>
-        <div className="container">
-          <div className={styles.footerGrid}>
-            <div className={styles.footerCol}>
-              <h5>Fragancias</h5>
-              <Link href="/productos?gender=masculino">Para Él</Link>
-              <Link href="/productos?gender=femenino">Para Ella</Link>
-              <Link href="/productos?gender=unisex">Unisex</Link>
-              <Link href="/productos?sort_by=newest">Nuevos Lanzamientos</Link>
-            </div>
-            <div className={styles.footerCol}>
-              <h5>Colecciones</h5>
-              <Link href="/productos">Clásicos</Link>
-              <Link href="/productos?is_arab=true">Colección Árabe</Link>
-              <Link href="/productos?destacado=true">Destacados</Link>
-            </div>
-            <div className={styles.footerCol}>
-              <h5>Acerca de</h5>
-              <p>Perfumería Fina</p>
-              <p>El Arte del Perfume</p>
-            </div>
-            <div className={styles.footerCol}>
-              <h5>Contacto</h5>
-              <p>WhatsApp disponible</p>
-            </div>
-          </div>
-          <div className={styles.footerBottom}>
-            <span>© {new Date().getFullYear()} Perfumería Fina. Todos los derechos reservados.</span>
-            <div className={styles.footerLinks}>
-              <a href="#">Términos de Privacidad</a>
-              <a href="#">Política de Devoluciones</a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }

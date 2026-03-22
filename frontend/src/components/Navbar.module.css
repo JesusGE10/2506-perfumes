@@ -6,8 +6,8 @@
   right: 0;
   z-index: 100;
   height: var(--nav-height);
-  background: #fff;
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-primary);
+  color: #fff;
   box-shadow: var(--shadow-sm);
 }
 
@@ -24,19 +24,20 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--color-text);
+  color: #fff;
 }
 
-.brandIcon {
-  font-size: 1.4rem;
-  color: var(--color-primary);
+.brandIconObj {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
 }
 
 .brandName {
   font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-text);
+  color: #fff;
   line-height: 1;
 }
 
@@ -49,33 +50,20 @@
 @media (min-width: 768px) { .links { display: flex; } }
 
 .links a {
+  display: inline-block;
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 500;
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
+  color: rgba(255, 255, 255, 0.85);
+  transition: color var(--transition-fast), transform var(--transition-fast);
   padding-bottom: 2px;
-  position: relative;
 }
-.links a::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--color-primary);
-  transform: scaleX(0);
-  transition: transform var(--transition-base);
-}
+
 .links a:hover,
 .links a.active {
-  color: var(--color-primary);
-}
-.links a:hover::after,
-.links a.active::after {
-  transform: scaleX(1);
+  color: #cca38d;
+  transform: scale(1.05);
 }
 
 /* Right actions */
@@ -89,20 +77,23 @@
   position: relative;
   display: flex;
   align-items: center;
-  color: var(--color-text-muted);
+  color: #fff;
   background: none;
   border: none;
   padding: 4px;
-  transition: color var(--transition-fast);
+  transition: transform var(--transition-fast), color var(--transition-fast);
   cursor: pointer;
 }
-.cartBtn:hover { color: var(--color-primary); }
+.cartBtn:hover { 
+  transform: scale(1.05); 
+  color: #cca38d;
+}
 
 .cartBadge {
   position: absolute;
   top: -5px;
   right: -8px;
-  background: var(--color-primary);
+  background: #000;
   color: #fff;
   font-size: 0.6rem;
   font-weight: 700;
@@ -121,7 +112,11 @@
   background: none;
   border: none;
   padding: 4px;
-  color: var(--color-text-muted);
+  color: #fff;
+  transition: color var(--transition-fast);
+}
+.menuBtn:hover {
+  color: #cca38d;
 }
 @media (min-width: 768px) { .menuBtn { display: none; } }
 
@@ -170,5 +165,5 @@
 }
 .mobileMenu a:hover {
   background: var(--color-bg-soft);
-  color: var(--color-primary);
+  color: #cca38d;
 }

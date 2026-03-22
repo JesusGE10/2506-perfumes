@@ -22,19 +22,38 @@ export default function Navbar() {
       <nav className={styles.nav}>
         <div className={`container ${styles.inner}`}>
           {/* Brand */}
-          <Link href="/" className={styles.brand}>
-            <span className={styles.brandIcon}>✦</span>
-            <span className={styles.brandName}>Perfumería Fina</span>
+          <Link 
+            href="/" 
+            className={styles.brand} 
+            onClick={(e) => { 
+                if (pathname === '/') {
+                  e.preventDefault(); 
+                  window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                }
+            }}
+          >
+            <img src="/logo-crema.png" alt="Logo" className={styles.brandIconObj} />
+            <span className={styles.brandName}>Perfumes 2506</span>
           </Link>
 
           {/* Desktop Links */}
           <ul className={styles.links}>
-            <li><Link href="/" className={pathname === '/' ? styles.active : ''}>Fragancias</Link></li>
-            <li><Link href="/productos" className={pathname.startsWith('/productos') ? styles.active : ''}>Colecciones</Link></li>
+            <li><Link href="/catalogo?tag=novedades">Lo más nuevo</Link></li>
+            <li><Link href="/catalogo?tag=mujeres">Mujeres</Link></li>
+            <li><Link href="/catalogo?tag=hombres">Hombres</Link></li>
+            <li><Link href="/catalogo?sort=ventas_desc">Los mas vendidos</Link></li>
+            <li><Link href="/catalogo">Catálogo</Link></li>
           </ul>
 
           {/* Right actions */}
           <div className={styles.actions}>
+            <button className={styles.cartBtn} aria-label="Buscar" onClick={() => {}}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+
             <button
               className={styles.cartBtn}
               onClick={() => setCartOpen(true)}
@@ -62,8 +81,11 @@ export default function Navbar() {
 
         {menuOpen && (
           <div className={styles.mobileMenu}>
-            <Link href="/">Fragancias</Link>
-            <Link href="/productos">Colecciones</Link>
+            <Link href="/catalogo?tag=novedades" onClick={() => setMenuOpen(false)}>Lo más nuevo</Link>
+            <Link href="/catalogo?tag=mujeres" onClick={() => setMenuOpen(false)}>Mujeres</Link>
+            <Link href="/catalogo?tag=hombres" onClick={() => setMenuOpen(false)}>Hombres</Link>
+            <Link href="/catalogo?sort=ventas_desc" onClick={() => setMenuOpen(false)}>Los mas vendidos</Link>
+            <Link href="/catalogo" onClick={() => setMenuOpen(false)}>Catálogo</Link>
             <button
               style={{
                 display: 'block', padding: '14px 24px', fontSize: '0.85rem',

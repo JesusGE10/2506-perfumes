@@ -4,7 +4,8 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+from typing import Any
 
 from app.modules.products.models import FamiliaOlfativaEnum, GeneroEnum, TipoNotaEnum
 
@@ -109,6 +110,37 @@ class PerfumeSummaryResponse(BaseModel):
     categoria: "CategoriaSummary"
     presentaciones: list[PresentacionResponse]
     imagen_principal: str | None = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def extract_image(cls, data: Any) -> Any:
+        # If it's already a dict, return as is
+        if isinstance(data, dict):
+            return data
+            
+        # Pydantic v2 from_attributes: Create dict map manually
+        result = {
+            "id": data.id,
+            "nombre": data.nombre,
+            "slug": data.slug,
+            "genero": data.genero,
+            "activo": data.activo,
+            "destacado": data.destacado,
+            "es_arabe": data.es_arabe,
+            "es_nuevo": data.es_nuevo,
+            "marca": data.marca,
+            "categoria": data.categoria,
+            "presentaciones": data.presentaciones,
+        }
+        
+        imgs = getattr(data, "imagenes", [])
+        if imgs:
+            principal = next((i.url for i in imgs if getattr(i, "es_principal", False)), None)
+            result["imagen_principal"] = principal or imgs[0].url
+        else:
+            result["imagen_principal"] = None
+            
+        return result
 
     model_config = {"from_attributes": True}
 
