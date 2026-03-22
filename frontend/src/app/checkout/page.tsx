@@ -33,7 +33,7 @@ const ESTADOS_VENEZUELA = [
 const schema = z.object({
   cliente_nombre: z.string().min(2, 'Ingresa tu nombre completo'),
   cliente_telefono: z.string().min(10, 'Ingresa un número válido'),
-  tipo_envio: z.enum(['delivery', 'nacional'], { required_error: 'Selecciona una modalidad', invalid_type_error: 'Selecciona una modalidad' }),
+  tipo_envio: z.enum(['delivery', 'nacional'], { message: 'Selecciona una modalidad' }),
   direccion: z.string().optional(),
   estado: z.string().optional(),
 }).superRefine((data, ctx) => {
