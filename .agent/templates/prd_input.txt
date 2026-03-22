@@ -1,0 +1,103 @@
+# Idea del Proyecto
+
+Describe la aplicación o SaaS que quieres construir.
+
+Ejemplo:
+Una plataforma web para clínicas dentales que permita a los pacientes reservar citas en línea y recibir recordatorios automatizados.
+
+---
+
+# Usuarios Objetivo
+
+¿Quiénes usarán este producto?
+
+Ejemplos:
+- Clínicas dentales
+- Recepcionistas de clínicas
+- Pacientes
+
+---
+
+# Problema a Resolver
+
+¿Qué problema resuelve este producto?
+
+Ejemplo:
+Muchas clínicas gestionan las citas manualmente a través de WhatsApp o llamadas telefónicas, lo que causa errores de programación y pérdida de reservas.
+
+---
+
+# Funcionalidades Core
+
+Lista las funcionalidades principales que deseas en el MVP.
+
+Ejemplo:
+- Reserva de citas en línea
+- Dashboard de administración para la clínica
+- Calendario de citas
+- Notificaciones para pacientes
+- Recordatorios de citas
+
+---
+
+# Referencias de Diseño (Opcional)
+
+Proporciona sitios web de referencia para inspiración de UI.
+
+Incluye qué es lo que te gusta de ellos.
+
+Ejemplo:
+https://ejemplo-sitio-clinica.com
+
+Inspiración:
+- Diseño de la sección hero
+- Interfaz de usuario (UI) de reserva de citas
+- Navegación móvil
+
+---
+
+# Referencias de Funcionalidades (Opcional)
+
+Sitios web que implementen funcionalidades similares a lo que buscas.
+
+Ejemplo:
+https://ejemplo-saas.com
+
+Funcionalidades de las que tomar inspiración:
+- Dashboard de usuario
+- Flujo de onboarding
+- Gestión de suscripciones
+
+---
+
+# Requisitos de Automatización (n8n)
+
+Describe las automatizaciones que deseas.
+
+Ejemplos:
+- Enviar recordatorio de WhatsApp antes de la cita
+- Enviar correo de confirmación después de la reserva
+- Notificar a la clínica cuando se cree una nueva reserva
+
+---
+
+# Integraciones Externas
+
+Si el sistema necesita integraciones, lístalas aquí.
+
+Ejemplos:
+- WhatsApp
+- Stripe
+- Google Calendar
+- Servicios de correo electrónico
+
+---
+
+# Restricciones o Preferencias
+
+Cualquier preferencia técnica o limitación.
+
+Ejemplos:
+- El Backend debe usar Python
+- La automatización debe usar n8n
+- Se prefiere una arquitectura simple

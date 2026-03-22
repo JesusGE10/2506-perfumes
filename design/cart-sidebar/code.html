@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Perfume Cart Sidebar HD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#632031",
+                        "background-light": "#faf8f7",
+                        "background-dark": "#1a1a1a",
+                        surface: {
+                            light: "#ffffff",
+                            dark: "#2d2d2d"
+                        },
+                        text: {
+                            light: "#333333",
+                            dark: "#e5e5e5"
+                        },
+                        muted: {
+                            light: "#6b7280",
+                            dark: "#9ca3af"
+                        }
+                    },
+                    fontFamily: {
+                        display: ["'Playfair Display'", "serif"],
+                        sans: ["'Inter'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+                        'hard': '0 10px 30px rgba(0, 0, 0, 0.2)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>.custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+        }.fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .slide-in-right {
+            animation: slideInRight 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark min-h-screen relative overflow-hidden">
+<div class="absolute inset-0 z-0">
+<header class="bg-primary text-white py-4 px-8 flex justify-between items-center shadow-md">
+<div class="flex items-center gap-8">
+<div class="font-display font-bold text-2xl tracking-wider">TP</div>
+<nav class="hidden md:flex gap-6">
+<a class="flex items-center gap-1 hover:text-white/80 transition-colors" href="#">Perfumes <span class="material-icons text-sm">expand_more</span></a>
+<a class="hover:text-white/80 transition-colors" href="#">Contacto</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center border border-white/30 rounded-full px-4 py-1.5 bg-white/10 backdrop-blur-sm">
+<span class="material-icons text-sm mr-2">location_on</span>
+<span class="text-sm">The Cookie Lab</span>
+<span class="material-icons text-sm ml-2">expand_more</span>
+</div>
+<button class="p-2 hover:bg-white/10 rounded-full transition-colors relative">
+<span class="material-icons">shopping_cart</span>
+<span class="absolute top-0 right-0 bg-white text-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-primary">2</span>
+</button>
+</div>
+</header>
+<main class="p-8 max-w-7xl mx-auto opacity-40 transition-opacity duration-300 pointer-events-none blur-[1px]">
+<div class="flex justify-between items-end mb-8">
+<h1 class="font-display text-3xl font-bold text-text-light dark:text-text-dark">Perfumes</h1>
+<div class="flex items-center gap-2">
+<span class="text-sm text-muted-light dark:text-muted-dark">Ordenar por</span>
+<select class="bg-transparent border-b border-gray-300 dark:border-gray-600 pb-1 text-sm focus:outline-none focus:border-primary">
+<option>Destacados</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-soft group">
+<div class="aspect-square bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
+<img alt="Chanel No. 5" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkYK7ldydtlYnveXkq7O93Nb59lQXF4I_o_6pBZP_9t5cGKlzlYDgUl2e45gtSOquzQ6mv7F4DzKGRjII-zfq6bsYVGkJgYbAEX7E8pbSPXjg5Qp3DqjJkPU3MTvASHrQBgm4oc4tdQRpYBJWa50eguiIVWsYi4NBGlnL6XCBkls9q56HOnqwbZqG0cJTP890JVLc86ylySz_Wr6K4_S4EmvpT_EaCoc2P1zH03CEwM0yR-_dkkuWI4uZhgMuCQ81j97eEGnsrXck"/>
+</div>
+<div class="p-4">
+<h3 class="font-semibold text-sm mb-1 line-clamp-2">Chanel No. 5 Eau de Parfum</h3>
+<p class="font-bold text-lg mb-3">$135.00</p>
+<button class="w-full py-2 border border-primary text-primary hover:bg-primary hover:text-white transition-colors rounded text-sm font-medium">Agregar</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm fade-in transition-opacity duration-300"></div>
+<aside class="fixed top-0 right-0 h-full w-full max-w-md bg-surface-light dark:bg-surface-dark z-50 shadow-hard flex flex-col slide-in-right">
+<div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
+<button aria-label="Clear cart" class="p-2 text-muted-light dark:text-muted-dark hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+<span class="material-icons text-[20px]">delete_outline</span>
+</button>
+<h2 class="font-display text-2xl font-semibold text-text-light dark:text-text-dark">Carrito</h2>
+<button aria-label="Close cart" class="p-2 text-muted-light dark:text-muted-dark hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+<span class="material-icons text-[20px]">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+<div class="flex gap-4 mb-8">
+<div class="w-20 h-24 flex-shrink-0 bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-700 flex items-center justify-center p-2">
+<img alt="Chanel No. 5 Perfume bottle" class="object-contain w-full h-full mix-blend-multiply dark:mix-blend-normal drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3BSBJg5MF6ErnAou4GWNGjviGNRehd99baEvzbI7TUfV29tDsOa9U8MQTPvRvFtE0pC8aLMQ8TunFbRxYWkd12jmZe-0DIA0U9qSEMr0vgIxfhx1g-nvvmTEuzTG7o0adchSJstArqFaByCBfPc1VWjbiP0AjnucIi-61bIVXZFiEWQBhMpUps9ky-hvOT1Tj4vDWI9WMTGJKLHnAyYQEMSWAuGaih6AE_ZRLFK9M3ZKBlKBpRy4VLwOcHas5cpAZOg1tZDQ_7Fs"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-1">
+<div>
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-semibold text-sm leading-tight text-text-light dark:text-text-dark pr-4">Chanel No. 5 Eau de Parfum</h3>
+<span class="font-bold text-sm whitespace-nowrap text-text-light dark:text-text-dark">$135.00</span>
+</div>
+</div>
+<div class="flex items-center border border-gray-200 dark:border-gray-700 rounded w-fit bg-white dark:bg-gray-900">
+<button aria-label="Decrease quantity" class="w-8 h-8 flex items-center justify-center text-muted-light dark:text-muted-dark hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons text-[16px]">remove</span>
+</button>
+<input class="w-10 h-8 text-center text-sm font-medium border-none p-0 focus:ring-0 text-text-light dark:text-text-dark bg-transparent" readonly="" type="number" value="1"/>
+<button aria-label="Increase quantity" class="w-8 h-8 flex items-center justify-center text-muted-light dark:text-muted-dark hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons text-[16px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex gap-4 mb-8">
+<div class="w-20 h-24 flex-shrink-0 bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-700 flex items-center justify-center p-2">
+<img alt="Dior Sauvage Elixir bottle" class="object-contain w-full h-full mix-blend-multiply dark:mix-blend-normal drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDctB4H8lYlvQkuGDXJxlCF_OlgRmrzOxGQ0Oe8oEz6Bu5LEN-n9nsR0N_MOf2sIe6QsxQG3A6zuHbqv2iksGcd1OigE5pKds385gYaRjl4yhGD6pR471aNaEXUcsKYDko6JL0qTkgY3BRhGrqeN0qIevliXhtHlMKdVhGEpP5RSdva55Ub-bocEfrmMB9xGSnB6D6bYpH7y2gZ5JQkkzH0rszeYkPbPFwuoYow4R5_88Bigi4mbAKXMizBufSDXyhZcC9n2onKUP8"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-1">
+<div>
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-semibold text-sm leading-tight text-text-light dark:text-text-dark pr-4">Dior Sauvage Elixir</h3>
+<span class="font-bold text-sm whitespace-nowrap text-text-light dark:text-text-dark">$155.00</span>
+</div>
+</div>
+<div class="flex items-center border border-gray-200 dark:border-gray-700 rounded w-fit bg-white dark:bg-gray-900">
+<button aria-label="Decrease quantity" class="w-8 h-8 flex items-center justify-center text-muted-light dark:text-muted-dark hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons text-[16px]">remove</span>
+</button>
+<input class="w-10 h-8 text-center text-sm font-medium border-none p-0 focus:ring-0 text-text-light dark:text-text-dark bg-transparent" readonly="" type="number" value="1"/>
+<button aria-label="Increase quantity" class="w-8 h-8 flex items-center justify-center text-muted-light dark:text-muted-dark hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons text-[16px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 dark:border-gray-800 p-6 bg-surface-light dark:bg-surface-dark mt-auto">
+<div class="flex justify-between items-end mb-6">
+<span class="text-lg font-semibold text-text-light dark:text-text-dark">Subtotal</span>
+<span class="text-2xl font-bold text-text-light dark:text-text-dark tracking-tight">$290.00</span>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 py-3 px-4 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                    Recoger en tienda
+                </button>
+<button class="flex-1 py-3 px-4 rounded-lg bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-900 flex justify-center items-center">
+                    Finalizar Compra
+                </button>
+</div>
+</div>
+</aside>
+
+</body></html>

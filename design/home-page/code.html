@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aorosa Parfumerie</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Lato:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#632031",
+                        "primary-light": "#8a3046",
+                        secondary: "#bda46d",
+                        "secondary-light": "#d4bf8f",
+                        "background-light": "#faf8f7",
+                        "background-dark": "#1a1a1a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#2d2d2d",
+                        "text-light": "#333333",
+                        "text-dark": "#f0f0f0",
+                        "text-muted-light": "#666666",
+                        "text-muted-dark": "#a0a0a0",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["Lato", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'lg': '1rem',
+                        'xl': '1.5rem',
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Lato', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark antialiased">
+<header class="bg-primary text-white py-4 px-6 md:px-12 sticky top-0 z-50">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-icons text-secondary text-3xl">water_drop</span>
+<span class="font-display text-2xl font-semibold tracking-wide">Aorosa Parfumerie</span>
+</div>
+<nav class="hidden md:flex space-x-8 text-sm uppercase tracking-wider">
+<a class="hover:text-secondary transition duration-300" href="#">Fragancias</a>
+<a class="hover:text-secondary transition duration-300" href="#">Colecciones</a>
+<a class="hover:text-secondary transition duration-300" href="#">Acerca de</a>
+<a class="hover:text-secondary transition duration-300" href="#">Contacto</a>
+</nav>
+<div class="flex items-center space-x-4">
+<button aria-label="Search" class="hover:text-secondary transition duration-300">
+<span class="material-icons">search</span>
+</button>
+<button aria-label="Cart" class="hover:text-secondary transition duration-300 relative">
+<span class="material-icons">shopping_cart</span>
+<span class="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">2</span>
+</button>
+</div>
+</div>
+</header>
+<section class="relative h-[600px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Luxury perfume bottles on a marble surface" class="w-full h-full object-cover object-center filter brightness-75" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDb95It4Df0en29fTjJlTD8MQX_TR8AmNb6XK6mzn-l2itzsvmPmBjWUjBYqAZXF_xI---EIh3hNob2UlK5S7qi8CVTAoWNrB3UskFQn26FFWDZCKwtySIr0zyMWvdm4G6XL18W0JU-ybCru9ORvWMsKJN5HeZvYZOm-jUH0XOgC77TKFqaoNR7tRvpspTBxPYctdYMMp5QJIethGaDukwiNrkt_D0_rnqSmIakGbH93dJsfFUIa5tkYWLClOZ92kxo6om9tKHjZp0"/>
+</div>
+<div class="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+<h1 class="font-display text-5xl md:text-7xl mb-6 font-bold text-shadow-lg">Descubre Tu Esencia</h1>
+<p class="text-lg md:text-2xl mb-8 font-light italic">Fragancias exclusivas que definen tu presencia</p>
+<a class="inline-block bg-primary hover:bg-primary-light text-white font-semibold py-3 px-8 rounded-full transition duration-300 shadow-md" href="#">
+                Ver Colección
+            </a>
+</div>
+</section>
+<main class="max-w-7xl mx-auto px-6 md:px-12 py-16 space-y-24">
+<section>
+<div class="flex justify-between items-end mb-10">
+<h2 class="font-display text-4xl text-primary dark:text-white font-semibold">Nuestras Fragancias</h2>
+<a class="text-secondary hover:text-secondary-light font-medium transition duration-300 flex items-center" href="#">
+                    Ver todo <span class="material-icons text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-80 overflow-hidden bg-gray-100 dark:bg-gray-800 p-6 flex items-center justify-center">
+<img alt="Éclat d'Or Perfume" class="object-contain max-h-full group-hover:scale-110 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uYuT_sAtI2WlGu-C-s1cRQSfXJAcdjX5QDhwU_kQXuLm9QEGQXyh4o6PTvTW9kTzlGFrelghoTTbsTTMiCofsoN-g00oYSdExZdRtm6hICxiRUDSBLx6I-E3sC-902CgNS7V17rnUpPHovvhg6B1nSSNtVGVkLzMahRZpn_5yRmJfMRQh5SOA_kxXdxaDLsuIeMP7qDc-g7uHBaGJaR6flOj4vNYKZWnArLI9_FA_o3UNdRKfZvrXCqFGu_J_KI0mD5qNUNMtJA"/>
+</div>
+<div class="p-6">
+<h3 class="font-display text-xl font-semibold mb-1 text-primary dark:text-white">Éclat d'Or</h3>
+<p class="text-secondary font-bold text-lg mb-4">$150.00</p>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-sm uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-80 overflow-hidden bg-gray-100 dark:bg-gray-800 p-6 flex items-center justify-center">
+<img alt="Rose Mystique Perfume" class="object-contain max-h-full group-hover:scale-110 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlj0tL5IDC3ZtMR29ylsCPs8Ru2fzp5biDVkw1QcNdEFVZWSOrM8c3l3gFBMpo4LkjsXDcWxETzviXzEDfY7ULIrHl6-Q232gL69WY5dRPOzF_HpoefIMfjSn2CvBF6fhf69F1Q4UN44jmMh6fj2zIbS5Bz0Qi_dQ4QB-1O6vYPrUkC2iFg8_0QVKyNw04-SX3MAqOiSeZi19arLMMj5JDVQ9kztMQ_Gi6Hu5LyJ3-n5qyt1O7JaX75MOEY1T-H50uHhiqV0Q_aao"/>
+</div>
+<div class="p-6">
+<h3 class="font-display text-xl font-semibold mb-1 text-primary dark:text-white">Rose Mystique</h3>
+<p class="text-secondary font-bold text-lg mb-4">$130.00</p>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-sm uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-80 overflow-hidden bg-gray-100 dark:bg-gray-800 p-6 flex items-center justify-center">
+<img alt="Noir Intense Perfume" class="object-contain max-h-full group-hover:scale-110 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTMcK6KBCdFA0tgpiMmFKQgYLeZb3hGlQo6fDlbe1JnbUwx9-ICm3h5vjw1AvSzmDZ99_mE1omu_uDXu3o-JLliX9NktTWRKDccFiJ6xJxBD6AWj1rsCtxf3rjF-gjLL8J_ku1-i25_By-7ZJBULTps2YHDlCae4p6s_SH3wm7pVdz571OqgAjOOoF2U311RZ4hOCaZ_pdctxQS4bnfxZDzwmoaQ9rGmRQZdGo_uMzhcrBer_NUR5d6zFtoR0DMNc7XWAikcYXnC4"/>
+</div>
+<div class="p-6">
+<h3 class="font-display text-xl font-semibold mb-1 text-primary dark:text-white">Noir Intense</h3>
+<p class="text-secondary font-bold text-lg mb-4">$180.00</p>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-sm uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-80 overflow-hidden bg-gray-100 dark:bg-gray-800 p-6 flex items-center justify-center">
+<img alt="Santal Royal Perfume" class="object-contain max-h-full group-hover:scale-110 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuhaesjCcJ1QOFkuhX31qigCknObQ1b4WUOyeIHGY2LUr5w9dyXG-HNjsxHLJV4PWHktMIaKC81kyNpPQ7UnviYHoevj9n-dummclmywysn2ZfIo2_yfCDp1wjB487ARJJ3iiPQgdRe15JoXF0RNHrWP8Is-RbxpYonakf7ZsKoGV4GdGeILb6ipak-OsousI5L7QNnvcU5KEEfH2XGdFMutfUEizYuWif9PGukW7XrwsKhLQ-3UvjwWbW7dcBKQP-zw_YO7p1Gdw"/>
+</div>
+<div class="p-6">
+<h3 class="font-display text-xl font-semibold mb-1 text-primary dark:text-white">Santal Royal</h3>
+<p class="text-secondary font-bold text-lg mb-4">$165.00</p>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-sm uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="flex justify-between items-end mb-10">
+<h2 class="font-display text-4xl text-primary dark:text-white font-semibold">Ofertas Exclusivas</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+<img alt="Colección Privée Set" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMijlJDKcvAyNggH9yTAqyBrAZ19PNu8Vmq_RACg7odzadrwxCATyGv1Kt_2EDJlbaB9-0ImfFM786EputnO5rkYhfuVVzRbrKCoYnCZyKZ8iNstavxMShCMbqQD0ZMhoxCeap6ZoIGb4pd1L8Q5aq-QTjLuSJODWQrTHox0c9PTzV96snCHpdbbV5Jebg85n1H4U2RVv9PcmXTE5SDZq4xwdbFPYufGkrMJ0MomDS36dslwUZxFvsrOrN39bXP7OB3bNNpdUMhjg"/>
+<div class="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded">20% OFF</div>
+</div>
+<div class="p-5">
+<h3 class="font-display text-lg font-semibold mb-1 text-primary dark:text-white line-clamp-1">Colección Privée Set</h3>
+<div class="flex items-center space-x-2 mb-4">
+<p class="text-secondary font-bold">$250.00</p>
+<p class="text-text-muted-light dark:text-text-muted-dark line-through text-sm">$312.50</p>
+</div>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-xs uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+<img alt="Oud &amp; Vanille" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDsOIFPsw0omokcU_rIbPRc1XIBttsYcFI1JaoFBzEJnURxWFEGeIgyzw_ksBvmGl7nkAO8-egsgVwXUHQamBL_6H9dfFHPyqY_FBe6_u7K5jsH5ajHvnoR_f7hU-OeHbhHQdIQHAZGMMfqAm8Q8LA2Mvyi9ZR4wfAruqlX1NaTdCwHRLRFSk9qZ9BRWuuip39pUK0sRNkKlqsJP2YQ-ujpOdQEQDVExpdH57dVGKIdy0f1WXa71X8x6mPW0WqJ6XsD1_vQW2pQlc"/>
+<div class="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded">15% OFF</div>
+</div>
+<div class="p-5">
+<h3 class="font-display text-lg font-semibold mb-1 text-primary dark:text-white line-clamp-1">Oud &amp; Vanille</h3>
+<div class="flex items-center space-x-2 mb-4">
+<p class="text-secondary font-bold">$127.50</p>
+<p class="text-text-muted-light dark:text-text-muted-dark line-through text-sm">$150.00</p>
+</div>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-xs uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+<img alt="Fleur de Nuit" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoJACv_SqbQ8i2Aibi7w-5VbL3qJNpbr3Pizw5U11uvGNpC6gfVArr4T1iHgeX9-vFK4NHSJzQZTMeojuUEAtEBAqr-uv7whGuwTj4G2Jln-IZ6lVRfe6q31Scu7ajjiWPx3-ideyMUb67mACOzXw3Ar8jb7ARA1644l7M3hN5xxzIGwHcIbqSbNh68rmF6PJdV7yKMTPanvGlm0veZbSIJ_3Wcyjz5vymkB79tycP5lIVnBtyyrp_0oL9vhRvFsPUjuR4_0RUZYo"/>
+<div class="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded">10% OFF</div>
+</div>
+<div class="p-5">
+<h3 class="font-display text-lg font-semibold mb-1 text-primary dark:text-white line-clamp-1">Fleur de Nuit</h3>
+<div class="flex items-center space-x-2 mb-4">
+<p class="text-secondary font-bold">$117.00</p>
+<p class="text-text-muted-light dark:text-text-muted-dark line-through text-sm">$130.00</p>
+</div>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-xs uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition duration-300">
+<div class="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+<img alt="Ambre Doré" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsMjqGhz7ongnswlZ79OBJp6RjlyJhXuAGrdLfaYrXM44ycj0JFAv4iCrc_4Jlccv5wWPpa0C1l4bBBt9kKreHPMrXwQo4NvRW8dGCJdwT7B33dYvn_4fLIeHQMmgApXhSKyn05ghjEyaM0qsCLoh2_clzJir0pKOkB0Vy_Zp55YBH75kuUtTAYrIPOFlSlP-wj8h3eoSky7HdQvbtUGBBEzHvMYDyOKdPZsIIc6DtKsAD5lW9Jua3w1XQhY8Hb1QvQrIJ40cW-cM"/>
+<div class="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded">30% OFF</div>
+</div>
+<div class="p-5">
+<h3 class="font-display text-lg font-semibold mb-1 text-primary dark:text-white line-clamp-1">Ambre Doré</h3>
+<div class="flex items-center space-x-2 mb-4">
+<p class="text-secondary font-bold">$161.00</p>
+<p class="text-text-muted-light dark:text-text-muted-dark line-through text-sm">$230.00</p>
+</div>
+<button class="w-full bg-primary hover:bg-primary-light text-white py-2 rounded-lg transition duration-300 text-xs uppercase tracking-wide font-medium">
+                            Agregar al carrito
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-primary text-white pt-16 pb-8">
+<div class="max-w-7xl mx-auto px-6 md:px-12">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+<div class="lg:col-span-1">
+<h4 class="font-display text-xl font-semibold mb-6 text-secondary">Fragancias</h4>
+<ul class="space-y-3 text-sm text-gray-300">
+<li><a class="hover:text-white transition duration-300" href="#">Para Él</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Para Ella</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Unisex</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Nuevos Lanzamientos</a></li>
+</ul>
+</div>
+<div class="lg:col-span-1">
+<h4 class="font-display text-xl font-semibold mb-6 text-secondary">Colecciones</h4>
+<ul class="space-y-3 text-sm text-gray-300">
+<li><a class="hover:text-white transition duration-300" href="#">Clásicos</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Colección Privada</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Ediciones Limitadas</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Sets de Regalo</a></li>
+</ul>
+</div>
+<div class="lg:col-span-1">
+<h4 class="font-display text-xl font-semibold mb-6 text-secondary">Acerca de</h4>
+<ul class="space-y-3 text-sm text-gray-300">
+<li><a class="hover:text-white transition duration-300" href="#">Nuestra Historia</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">El Arte del Perfume</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Sostenibilidad</a></li>
+<li><a class="hover:text-white transition duration-300" href="#">Carreras</a></li>
+</ul>
+</div>
+<div class="lg:col-span-2">
+<h4 class="font-display text-xl font-semibold mb-6 text-secondary">Contacto</h4>
+<ul class="space-y-4 text-sm text-gray-300 mb-6">
+<li class="flex items-center"><span class="material-icons mr-3 text-secondary text-sm">phone</span> +90 223 458 7210</li>
+<li class="flex items-center"><span class="material-icons mr-3 text-secondary text-sm">email</span> info@aorosaparfumerie.com</li>
+<li class="flex items-center"><span class="material-icons mr-3 text-secondary text-sm">location_on</span> 123 Rue de la Paix, Paris, FR</li>
+</ul>
+<div class="flex space-x-4 mb-6">
+<a class="text-white hover:text-secondary transition duration-300" href="#"><span class="material-icons">facebook</span></a>
+<a class="text-white hover:text-secondary transition duration-300" href="#"><span class="material-icons">camera_alt</span></a>
+<a class="text-white hover:text-secondary transition duration-300" href="#"><span class="material-icons">ondemand_video</span></a>
+</div>
+<div class="flex space-x-2">
+<div class="bg-white rounded px-2 py-1 text-primary text-xs font-bold">VISA</div>
+<div class="bg-white rounded px-2 py-1 text-primary text-xs font-bold">MC</div>
+<div class="bg-white rounded px-2 py-1 text-primary text-xs font-bold">AMEX</div>
+<div class="bg-white rounded px-2 py-1 text-primary text-xs font-bold">PAYPAL</div>
+</div>
+</div>
+</div>
+<div class="border-t border-primary-light pt-8 text-center text-xs text-gray-400 flex flex-col md:flex-row justify-between items-center">
+<p>© 2023 Aorosa Parfumerie. Todos los derechos reservados.</p>
+<div class="space-x-4 mt-4 md:mt-0">
+<a class="hover:text-white transition duration-300" href="#">Términos de Privacidad</a>
+<a class="hover:text-white transition duration-300" href="#">Política de Devoluciones</a>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>
