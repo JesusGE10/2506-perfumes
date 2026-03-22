@@ -86,17 +86,6 @@ export default function Navbar() {
             <Link href="/catalogo?tag=hombres" onClick={() => setMenuOpen(false)}>Hombres</Link>
             <Link href="/catalogo?sort=ventas_desc" onClick={() => setMenuOpen(false)}>Los mas vendidos</Link>
             <Link href="/catalogo" onClick={() => setMenuOpen(false)}>Catálogo</Link>
-            <button
-              style={{
-                display: 'block', padding: '14px 24px', fontSize: '0.85rem',
-                fontWeight: 500, color: 'var(--color-text-muted)', border: 'none',
-                borderBottom: '1px solid var(--color-border)', textAlign: 'left',
-                background: 'none', width: '100%', cursor: 'pointer',
-              }}
-              onClick={() => { setMenuOpen(false); setCartOpen(true); }}
-            >
-              Carrito {mounted && totalItems > 0 && `(${totalItems})`}
-            </button>
           </div>
         )}
       </nav>
