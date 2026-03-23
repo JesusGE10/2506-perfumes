@@ -4,10 +4,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Perfumería Fina — Fragancias de Autor y Nicho',
+  title: 'Perfumes 2506',
   description: 'Descubre nuestra colección exclusiva de perfumes de diseñador, fragancias de nicho y árabes. Compra fácil, entrega rápida.',
   openGraph: {
-    title: 'Perfumería Fina',
+    title: 'Perfumes 2506',
     description: 'Fragancias de autor y nicho — experiencia de compra premium',
     type: 'website',
   },
