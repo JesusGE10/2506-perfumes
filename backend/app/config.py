@@ -38,6 +38,11 @@ class Settings(BaseSettings):
     # --- OpenAI ---
     OPENAI_API_KEY: str = ""
 
+    # --- Telegram Notifications ---
+    TELEGRAM_BOT_TOKEN: str = ""
+    TELEGRAM_CHAT_ID: str = ""
+    ADMIN_BASE_URL: str = "http://localhost:3000"
+
     # --- CORS ---
     CORS_ORIGINS: str = "http://localhost:3000"
 

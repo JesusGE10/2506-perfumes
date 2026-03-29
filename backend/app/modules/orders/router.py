@@ -84,6 +84,32 @@ async def get_order(order_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     return await service.get_order_by_id(db, order_id)
 
 
+@router.post(
+    "/admin/orders/{order_id}/confirm",
+    response_model=PedidoResponse,
+    dependencies=[Depends(get_current_admin)],
+)
+async def confirm_order(order_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """
+    Confirm a PENDIENTE order. Decrements stock and changes status to CONFIRMADO.
+    Admin only.
+    """
+    return await service.confirm_order(db, order_id)
+
+
+@router.post(
+    "/admin/orders/{order_id}/discard",
+    response_model=PedidoResponse,
+    dependencies=[Depends(get_current_admin)],
+)
+async def discard_order(order_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """
+    Discard a PENDIENTE order. Changes status to CANCELADO without touching stock.
+    Admin only.
+    """
+    return await service.discard_order(db, order_id)
+
+
 @router.patch(
     "/admin/orders/{order_id}/status",
     response_model=PedidoResponse,

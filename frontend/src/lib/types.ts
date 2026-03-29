@@ -1,10 +1,10 @@
 // Shared TypeScript types matching the backend schemas
 
-export type GeneroEnum = 'masculino' | 'femenino' | 'unisex';
-export type FamiliaOlfativaEnum = 'floral' | 'oriental' | 'aromatic' | 'woody' | 'fresh' | 'gourmand' | 'chypre' | 'fougere' | 'amber' | 'aquatic' | 'green';
+export type GeneroEnum = 'hombre' | 'mujer' | 'unisex';
+export type FamiliaOlfativaEnum = 'citrico' | 'amaderado' | 'floral' | 'oriental' | 'dulce' | 'fresco' | 'especiado' | 'acuatico';
 export type TipoNotaEnum = 'salida' | 'corazon' | 'fondo';
-export type MetodoPagoEnum = 'transferencia' | 'efectivo' | 'pago_movil';
-export type EstadoPedidoEnum = 'pendiente' | 'confirmado' | 'en_preparacion' | 'enviado' | 'entregado' | 'cancelado';
+export type MetodoPagoEnum = 'transferencia' | 'efectivo' | 'pago_movil' | 'zelle';
+export type EstadoPedidoEnum = 'pendiente' | 'confirmado' | 'enviado' | 'entregado' | 'cancelado';
 
 export interface MarcaSummary {
   id: string;
@@ -121,4 +121,43 @@ export interface CartItem {
   perfume: PerfumeSummaryResponse;
   presentacion: PresentacionResponse;
   cantidad: number;
+}
+
+// ─── Admin Auth ───────────────────────────────────────────────────────────────
+export interface AdminLoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  nombre: string;
+  created_at: string;
+  last_login: string | null;
+}
+
+// ─── Dashboard Metrics ────────────────────────────────────────────────────────
+export interface DashboardMetrics {
+  revenue: {
+    today: number;
+    this_week: number;
+    this_month: number;
+    total: number;
+  };
+  orders: {
+    today: number;
+    by_status: Record<EstadoPedidoEnum, number>;
+  };
+  low_stock: Array<{
+    presentacion_id: string;
+    perfume_nombre: string;
+    tamano_ml: number;
+    stock: number;
+  }>;
 }

@@ -6,8 +6,9 @@ Flow:
 1. Validate zone and all presentations exist with enough stock
 2. Calculate prices and apply active promotions (if any)
 3. Create the order + line items atomically
-4. Decrement stock for each presentation
+4. Stock is NOT decremented here (moved to confirm_order)
 5. Dispatch 'order_created' event to n8n (fire-and-forget)
+6. Send Telegram alert to admin (fire-and-forget)
 """
 
 import uuid
@@ -15,10 +16,11 @@ from decimal import Decimal
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.core.events import dispatch_event
 from app.core.exceptions import (
+    AppException,
     InsufficientStockException,
     NotFoundException,
     ValidationException,
@@ -200,6 +202,14 @@ async def create_order(db: AsyncSession, data: CheckoutCreateRequest) -> Pedido:
         },
     )
 
+    # 8. Send Telegram alert to admin (fire-and-forget — never blocks checkout)
+    try:
+        from app.core.telegram import send_order_alert
+        full_order = await get_order_by_id(db, order.id)
+        await send_order_alert(full_order)
+    except Exception:
+        pass  # Telegram failure must never block the checkout
+
     return await get_order_by_id(db, order.id)
 
 
@@ -246,31 +256,43 @@ async def confirm_order(db: AsyncSession, order_id: uuid.UUID) -> Pedido:
     order = result.unique().scalar_one_or_none()
 
     if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
+        raise NotFoundException(f"Pedido '{order_id}' no encontrado")
 
     if order.estado != EstadoPedidoEnum.PENDIENTE:
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Cannot confirm order in state: {order.estado}"
+        raise AppException(
+            detail=f"No se puede confirmar un pedido en estado: {order.estado.value}",
+            code="INVALID_STATE",
+            status_code=400,
         )
 
-    # Decrement stock
+    # Decrement stock for each item
     for item in order.items:
         pres_stmt = select(Presentacion).where(Presentacion.id == item.presentacion_id)
         pres_res = await db.execute(pres_stmt)
         pres = pres_res.scalar_one_or_none()
         if pres:
             if pres.stock < item.cantidad:
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Not enough stock for {item.perfume_nombre} ({item.tamano_ml}ml). Available: {pres.stock}, Requested: {item.cantidad}"
+                raise InsufficientStockException(
+                    f"Stock insuficiente para {item.perfume_nombre} ({item.tamano_ml}ml). "
+                    f"Disponible: {pres.stock}, solicitado: {item.cantidad}"
                 )
             pres.stock -= item.cantidad
 
     order.estado = EstadoPedidoEnum.CONFIRMADO
     await db.commit()
-    await db.refresh(order)
-    return order
+
+    # Dispatch n8n event for customer notification
+    await dispatch_event(
+        "order_status_changed",
+        {
+            "order_id": str(order.id),
+            "cliente_telefono": order.cliente_telefono,
+            "estado_anterior": EstadoPedidoEnum.PENDIENTE.value,
+            "estado_nuevo": EstadoPedidoEnum.CONFIRMADO.value,
+        },
+    )
+
+    return await get_order_by_id(db, order.id)
 
 
 async def discard_order(db: AsyncSession, order_id: uuid.UUID) -> Pedido:
@@ -282,18 +304,18 @@ async def discard_order(db: AsyncSession, order_id: uuid.UUID) -> Pedido:
     order = result.scalar_one_or_none()
 
     if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
+        raise NotFoundException(f"Pedido '{order_id}' no encontrado")
 
     if order.estado != EstadoPedidoEnum.PENDIENTE:
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Cannot discard order in state: {order.estado}"
+        raise AppException(
+            detail=f"No se puede descartar un pedido en estado: {order.estado.value}",
+            code="INVALID_STATE",
+            status_code=400,
         )
 
     order.estado = EstadoPedidoEnum.CANCELADO
     await db.commit()
-    await db.refresh(order)
-    return order
+    return await get_order_by_id(db, order.id)
 
 
 async def list_orders(

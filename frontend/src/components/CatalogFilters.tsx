@@ -7,8 +7,8 @@ import styles from './CatalogFilters.module.css';
 
 const GENDER_OPTIONS: { value: GeneroEnum | ''; label: string }[] = [
   { value: '', label: 'Todos' },
-  { value: 'masculino', label: 'Masculino' },
-  { value: 'femenino', label: 'Femenino' },
+  { value: 'hombre', label: 'Hombre' },
+  { value: 'mujer', label: 'Mujer' },
   { value: 'unisex', label: 'Unisex' },
 ];
 

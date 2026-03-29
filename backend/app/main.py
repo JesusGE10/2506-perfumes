@@ -77,6 +77,12 @@ def create_app() -> FastAPI:
 
     return app
 
+    # --- Routers (Phase 5) ---
+    from app.modules.metrics.router import router as metrics_router
+    app.include_router(metrics_router, prefix="/api/v1")
+
+    return app
+
 
 
 # Application instance used by uvicorn

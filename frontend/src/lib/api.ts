@@ -56,4 +56,50 @@ async function apiFetch<T>(
   return data as T;
 }
 
+/**
+ * Authenticated fetch for admin endpoints.
+ * Reads the JWT token from localStorage (via authStore key) and injects
+ * it as a Bearer Authorization header.
+ */
+export async function adminFetch<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  // Read token from Zustand persist storage
+  let token: string | null = null;
+  try {
+    const raw = localStorage.getItem('admin-auth');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      token = parsed?.state?.token ?? null;
+    }
+  } catch {
+    // localStorage not available (SSR) — token stays null
+  }
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
+
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+
+  if (res.status === 401) {
+    // Token expired or invalid — redirect to login
+    if (typeof window !== 'undefined') {
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+  }
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: 'Error desconocido' }));
+    throw new Error(error.detail ?? `HTTP ${res.status}`);
+  }
+
+  if (res.status === 204) return undefined as T;
+  return res.json() as Promise<T>;
+}
+
 export default apiFetch;

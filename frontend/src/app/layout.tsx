@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import ClientRootLayout from '@/components/ClientRootLayout';
 
 export const metadata: Metadata = {
   title: 'Perfumes 2506',
@@ -20,12 +19,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Navbar />
-        <main style={{ paddingTop: 'var(--nav-height)', flex: 1 }}>
-          {children}
-        </main>
-        <Footer />
+      <body>
+        <ClientRootLayout>{children}</ClientRootLayout>
       </body>
     </html>
   );
