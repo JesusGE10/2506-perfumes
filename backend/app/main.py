@@ -75,10 +75,9 @@ def create_app() -> FastAPI:
 
     app.include_router(promotions_router, prefix="/api/v1")
 
-    return app
-
     # --- Routers (Phase 5) ---
     from app.modules.metrics.router import router as metrics_router
+
     app.include_router(metrics_router, prefix="/api/v1")
 
     return app

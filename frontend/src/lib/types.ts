@@ -138,26 +138,91 @@ export interface AdminUser {
   id: string;
   email: string;
   nombre: string;
+  foto_perfil_url: string | null;
+  rol: 'super_admin' | 'admin';
   created_at: string;
   last_login: string | null;
 }
 
 // ─── Dashboard Metrics ────────────────────────────────────────────────────────
+export interface LowStockItem {
+  presentacion_id: string;
+  perfume_nombre: string;
+  tamano_ml: number;
+  stock: number;
+  imagen_url: string | null;
+}
+
 export interface DashboardMetrics {
   revenue: {
     today: number;
     this_week: number;
     this_month: number;
-    total: number;
   };
   orders: {
     today: number;
+    this_week: number;
+    this_month: number;
     by_status: Record<EstadoPedidoEnum, number>;
+    pending_total: number;
   };
-  low_stock: Array<{
-    presentacion_id: string;
+  ticket_promedio_mes: number;
+  promotions: {
+    active_count: number;
+    active_orders: number;
+    active_revenue: number;
+  };
+  low_stock: LowStockItem[];
+}
+
+export interface OrdersByPeriodItem {
+  dia: string;
+  pedidos: number;
+  ingresos: number;
+}
+
+export interface OrdersSummary {
+  pending_count: number;
+  pending_total: number;
+}
+
+export interface TopProductsResponse {
+  top: Array<{
+    perfume_id: string;
     perfume_nombre: string;
-    tamano_ml: number;
-    stock: number;
+    genero: string | null;
+    total_vendido: number;
+    ingreso_generado: number;
   }>;
+  bottom: Array<{
+    perfume_id: string;
+    perfume_nombre: string;
+    genero: string | null;
+    total_vendido: number;
+  }>;
+}
+
+export interface GenderSalesItem {
+  genero: string;
+  total_vendido: number;
+  ingreso: number;
+}
+
+export interface AbandonedCartItem {
+  presentacion_id: string;
+  perfume_nombre: string;
+  tamano_ml: number;
+  veces_abandonado: number;
+}
+
+export interface PromotionStat {
+  promocion_id: string;
+  nombre: string;
+  tipo: string;
+  activa: boolean;
+  fecha_inicio: string;
+  fecha_fin: string | null;
+  pedidos_count: number;
+  descuento_otorgado: number;
+  ingreso_neto: number;
 }
