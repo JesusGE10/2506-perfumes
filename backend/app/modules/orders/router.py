@@ -4,12 +4,13 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.pagination import PaginatedResponse
 from app.dependencies import get_current_admin, get_db
 from app.modules.orders import service
-from app.modules.orders.models import EstadoPedidoEnum
+from app.modules.orders.models import EstadoPedidoEnum, Pedido
 from app.modules.orders.schemas import (
     CheckoutCreateRequest,
     PedidoResponse,
@@ -57,6 +58,25 @@ async def track_checkout(
 
 
 # ─── Admin order management ───────────────────────────────────────────────────
+
+@router.get(
+    "/admin/orders/summary",
+    dependencies=[Depends(get_current_admin)],
+)
+async def get_orders_summary(db: AsyncSession = Depends(get_db)):
+    """Return count and total amount of PENDIENTE orders. Admin only."""
+    result = await db.execute(
+        select(
+            func.count(Pedido.id).label("pending_count"),
+            func.coalesce(func.sum(Pedido.total), 0).label("pending_total"),
+        ).where(Pedido.estado == EstadoPedidoEnum.PENDIENTE)
+    )
+    row = result.one()
+    return {
+        "pending_count": int(row.pending_count),
+        "pending_total": float(row.pending_total),
+    }
+
 
 @router.get(
     "/admin/orders",

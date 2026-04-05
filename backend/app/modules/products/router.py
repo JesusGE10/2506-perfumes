@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -147,6 +147,23 @@ async def update_product(
     return await service.update_product(db, product_id, data)
 
 
+@router.patch(
+    f"{PREFIX_ADMIN}/{{product_id}}/presentations/{{presentation_id}}",
+    response_model=None,
+    dependencies=[Depends(get_current_admin)],
+)
+async def update_presentation(
+    product_id: uuid.UUID,
+    presentation_id: uuid.UUID,
+    data: "PresentacionUpdate",
+    db: AsyncSession = Depends(get_db),
+):
+    """Inline update of a presentation's price, stock, or size. Admin only."""
+    from app.modules.products.schemas import PresentacionUpdate
+    pres = await service.update_presentation(db, product_id, presentation_id, data)
+    return {"id": str(pres.id), "tamano_ml": pres.tamano_ml, "precio": float(pres.precio), "stock": pres.stock}
+
+
 @router.delete(
     f"{PREFIX_ADMIN}/{{product_id}}",
     status_code=204,
@@ -157,3 +174,56 @@ async def delete_product(
 ):
     """Permanently delete a product. Admin only."""
     await service.delete_product(db, product_id)
+
+
+@router.post(
+    f"{PREFIX_ADMIN}/bulk-delete",
+    dependencies=[Depends(get_current_admin)],
+)
+async def bulk_delete_products(
+    product_ids: list[uuid.UUID],
+    db: AsyncSession = Depends(get_db),
+):
+    """Permanently delete multiple products at once. Admin only."""
+    return await service.bulk_delete_products(db, product_ids)
+
+
+@router.post(
+    f"{PREFIX_ADMIN}/import",
+    dependencies=[Depends(get_current_admin)],
+)
+async def import_products(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Import products from an Excel (.xlsx) or CSV (.csv) file.
+
+    Expected columns: nombre, marca, genero, tamano_ml, precio, stock, descripcion
+    Only 'nombre' is required. Uses upsert logic: update if exists, create if not.
+    Admin only.
+    """
+    import io
+    import csv
+
+    content = await file.read()
+    filename = file.filename or ""
+    rows: list[dict] = []
+
+    if filename.endswith(".csv"):
+        text = content.decode("utf-8-sig")
+        reader = csv.DictReader(io.StringIO(text))
+        rows = list(reader)
+    elif filename.endswith(".xlsx"):
+        import openpyxl
+        wb = openpyxl.load_workbook(io.BytesIO(content), data_only=True)
+        ws = wb.active
+        headers = [str(cell.value).strip().lower() for cell in next(ws.iter_rows(min_row=1, max_row=1))]
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            rows.append(dict(zip(headers, row)))
+    else:
+        raise HTTPException(status_code=400, detail="Formato no soportado. Use .xlsx o .csv")
+
+    result = await service.import_products_from_rows(db, rows)
+    return result
+

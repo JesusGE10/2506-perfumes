@@ -268,3 +268,172 @@ async def delete_product(db: AsyncSession, product_id: uuid.UUID) -> None:
         raise NotFoundException(f"Perfume con id '{product_id}' no encontrado")
     await db.delete(product)
     await db.commit()
+
+
+async def update_presentation(
+    db: AsyncSession,
+    product_id: uuid.UUID,
+    pres_id: uuid.UUID,
+    data: "PresentacionUpdate",
+) -> Presentacion:
+    """Update price, stock, or size for a specific presentation. Admin only."""
+    result = await db.execute(
+        select(Presentacion).where(
+            Presentacion.id == pres_id,
+            Presentacion.perfume_id == product_id,
+        )
+    )
+    pres = result.scalar_one_or_none()
+    if not pres:
+        raise NotFoundException(f"Presentación '{pres_id}' no encontrada para este producto")
+
+    if data.tamano_ml is not None:
+        pres.tamano_ml = data.tamano_ml
+    if data.precio is not None:
+        pres.precio = data.precio
+    if data.stock is not None:
+        pres.stock = data.stock
+
+    await db.commit()
+    await db.refresh(pres)
+    return pres
+
+
+async def bulk_delete_products(db: AsyncSession, product_ids: list[uuid.UUID]) -> dict:
+    """Permanently delete multiple products atomically. Returns counts."""
+    deleted = 0
+    not_found = []
+    for pid in product_ids:
+        result = await db.execute(select(Perfume).where(Perfume.id == pid))
+        product = result.scalar_one_or_none()
+        if product:
+            await db.delete(product)
+            deleted += 1
+        else:
+            not_found.append(str(pid))
+    await db.commit()
+    return {"deleted": deleted, "not_found": not_found}
+
+
+async def import_products_from_rows(
+    db: AsyncSession,
+    rows: list[dict],
+) -> dict:
+    """
+    Upsert products from parsed Excel/CSV rows.
+
+    Row format: { nombre, marca (nombre), genero, tamano_ml, precio, stock, descripcion }
+    - If a product with the same nombre+marca already exists → update its data and upsert presentation
+    - If not → create product + presentation
+    Returns { created, updated, skipped, errors }
+    """
+    from app.modules.brands.models import Marca as MarcaModel
+    from app.modules.categories.models import Categoria as CategoriaModel
+
+    created = 0
+    updated = 0
+    skipped = 0
+    errors = []
+
+    # Get or ensure a default category "General" for imports
+    default_cat_result = await db.execute(
+        select(CategoriaModel).where(CategoriaModel.slug == "general")
+    )
+    default_cat = default_cat_result.scalar_one_or_none()
+    if not default_cat:
+        default_cat = CategoriaModel(nombre="General", slug="general")
+        db.add(default_cat)
+        await db.flush()
+
+    for i, row in enumerate(rows, start=2):  # row 2+ (row 1 is header)
+        nombre = str(row.get("nombre", "")).strip()
+        if not nombre:
+            skipped += 1
+            continue
+
+        marca_nombre = str(row.get("marca", "Sin marca")).strip()
+        genero_str = str(row.get("genero", "unisex")).strip().lower()
+        tamano_raw = row.get("tamano_ml")
+        precio_raw = row.get("precio")
+        stock_raw = row.get("stock", 0)
+        descripcion = str(row.get("descripcion", "")).strip() or None
+
+        # Validate genero
+        if genero_str not in ("hombre", "mujer", "unisex"):
+            genero_str = "unisex"
+
+        # Parse numeric fields
+        try:
+            tamano_ml = int(float(str(tamano_raw))) if tamano_raw is not None else None
+            precio = Decimal(str(precio_raw)) if precio_raw is not None else None
+            stock = int(float(str(stock_raw)))
+        except (ValueError, TypeError) as e:
+            errors.append(f"Fila {i} ({nombre}): {e}")
+            continue
+
+        # Find or create brand
+        marca_result = await db.execute(
+            select(MarcaModel).where(MarcaModel.nombre.ilike(marca_nombre))
+        )
+        marca = marca_result.scalar_one_or_none()
+        if not marca:
+            marca = MarcaModel(nombre=marca_nombre, slug=slugify(marca_nombre))
+            db.add(marca)
+            await db.flush()
+
+        # Find existing product
+        existing_result = await db.execute(
+            select(Perfume).where(
+                Perfume.nombre.ilike(nombre),
+                Perfume.marca_id == marca.id,
+            ).options(selectinload(Perfume.presentaciones))
+        )
+        product = existing_result.scalar_one_or_none()
+
+        if product:
+            # Update descriptive fields
+            if descripcion:
+                product.descripcion = descripcion
+            if genero_str:
+                product.genero = GeneroEnum(genero_str)
+
+            # Upsert presentation if size is provided
+            if tamano_ml is not None and precio is not None:
+                existing_pres = next(
+                    (p for p in product.presentaciones if p.tamano_ml == tamano_ml), None
+                )
+                if existing_pres:
+                    existing_pres.precio = precio
+                    existing_pres.stock = stock
+                else:
+                    db.add(Presentacion(
+                        perfume_id=product.id, tamano_ml=tamano_ml, precio=precio, stock=stock
+                    ))
+            updated += 1
+        else:
+            # Create new product
+            slug = slugify(nombre)
+            existing_slug = await db.execute(select(Perfume).where(Perfume.slug == slug))
+            if existing_slug.scalar_one_or_none():
+                slug = f"{slug}-{uuid.uuid4().hex[:6]}"
+
+            product = Perfume(
+                nombre=nombre,
+                slug=slug,
+                marca_id=marca.id,
+                categoria_id=default_cat.id,
+                genero=GeneroEnum(genero_str),
+                descripcion=descripcion,
+            )
+            db.add(product)
+            await db.flush()
+
+            if tamano_ml is not None and precio is not None:
+                db.add(Presentacion(
+                    perfume_id=product.id, tamano_ml=tamano_ml, precio=precio, stock=stock
+                ))
+            created += 1
+
+    await db.commit()
+    return {"created": created, "updated": updated, "skipped": skipped, "errors": errors}
+

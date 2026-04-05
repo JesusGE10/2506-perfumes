@@ -28,7 +28,7 @@ if config.config_file_name is not None:
 
 # MetaData for autogenerate support — all models must be imported
 # before this point so their tables are registered on Base.metadata.
-from app.modules.auth.models import AdminUser  # noqa: F401
+from app.modules.auth.models import AdminUser, AdminSettings, AdminRolEnum  # noqa: F401
 from app.modules.brands.models import Marca  # noqa: F401
 from app.modules.categories.models import Categoria  # noqa: F401
 from app.modules.products.models import (  # noqa: F401
