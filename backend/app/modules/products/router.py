@@ -122,6 +122,26 @@ async def get_product_detail(slug: str, db: AsyncSession = Depends(get_db)):
 
 # ─── Admin CRUD ────────────────────────────────────────────────────────────
 
+@router.get(
+    PREFIX_ADMIN,
+    response_model=PaginatedResponse[PerfumeSummaryResponse],
+    dependencies=[Depends(get_current_admin)],
+)
+async def admin_list_products(
+    q: str | None = None,
+    activo: bool | None = None,
+    page: Annotated[int, Query(ge=1)] = 1,
+    size: Annotated[int, Query(ge=1, le=100)] = 20,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    List ALL products (active + inactive) for the admin panel.
+    Supports search (q) and active filter. Admin only.
+    """
+    items, total = await service.admin_list_products(db, q=q, activo=activo, page=page, size=size)
+    return PaginatedResponse.create(items=items, total=total, page=page, size=size)
+
+
 @router.post(
     PREFIX_ADMIN,
     response_model=PerfumeDetailResponse,
@@ -133,6 +153,19 @@ async def create_product(
 ):
     """Create a new product with presentations and notes. Admin only."""
     return await service.create_product(db, data)
+
+
+@router.get(
+    f"{PREFIX_ADMIN}/{{product_id}}",
+    response_model=PerfumeDetailResponse,
+    dependencies=[Depends(get_current_admin)],
+)
+async def admin_get_product(
+    product_id: uuid.UUID, db: AsyncSession = Depends(get_db)
+):
+    """Get full product detail by UUID. Admin only (includes inactive)."""
+    return await service.admin_get_product(db, product_id)
+
 
 
 @router.put(

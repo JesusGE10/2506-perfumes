@@ -177,6 +177,64 @@ async def get_newest_products(db: AsyncSession, limit: int = 10) -> list[Perfume
 
 # ─── Admin CRUD ────────────────────────────────────────────────────────────
 
+async def admin_list_products(
+    db: AsyncSession,
+    q: str | None = None,
+    activo: bool | None = None,
+    page: int = 1,
+    size: int = 20,
+) -> tuple[list[Perfume], int]:
+    """List all products for admin, including inactive ones. Supports search."""
+    query = select(Perfume)
+
+    if activo is not None:
+        query = query.where(Perfume.activo == activo)
+    if q:
+        search = f"%{q}%"
+        query = query.where(
+            or_(Perfume.nombre.ilike(search), Perfume.descripcion.ilike(search))
+        )
+
+    query = query.order_by(Perfume.nombre.asc())
+
+    # Count
+    count_query = select(func.count()).select_from(query.subquery())
+    total = (await db.execute(count_query)).scalar_one()
+
+    # Paginate
+    offset = (page - 1) * size
+    items_query = (
+        query.offset(offset).limit(size)
+        .options(
+            selectinload(Perfume.marca),
+            selectinload(Perfume.categoria),
+            selectinload(Perfume.presentaciones),
+            selectinload(Perfume.imagenes),
+        )
+    )
+    result = await db.execute(items_query)
+    return list(result.scalars().unique().all()), total
+
+
+async def admin_get_product(db: AsyncSession, product_id: uuid.UUID) -> Perfume:
+    """Return full product detail by UUID (includes inactive). Admin only."""
+    result = await db.execute(
+        select(Perfume)
+        .where(Perfume.id == product_id)
+        .options(
+            selectinload(Perfume.marca),
+            selectinload(Perfume.categoria),
+            selectinload(Perfume.presentaciones),
+            selectinload(Perfume.imagenes),
+            selectinload(Perfume.perfume_notas).selectinload(PerfumeNota.nota),
+        )
+    )
+    product = result.scalar_one_or_none()
+    if not product:
+        raise NotFoundException(f"Perfume con id '{product_id}' no encontrado")
+    return product
+
+
 async def create_product(db: AsyncSession, data: PerfumeCreate) -> Perfume:
     await _assert_brand_exists(db, data.marca_id)
     await _assert_category_exists(db, data.categoria_id)
