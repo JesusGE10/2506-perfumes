@@ -51,3 +51,22 @@ async def get_current_admin(
         )
 
     return payload
+
+
+async def get_current_superadmin(
+    payload: dict = Depends(get_current_admin),
+) -> dict:
+    """
+    Restrict endpoint access to super_admin role only.
+
+    Reads the 'rol' claim from the JWT payload (set during login).
+    No DB round-trip required — authorization is fully token-based.
+
+    Raises 403 if the authenticated admin is not a super_admin.
+    """
+    if payload.get("rol") != "super_admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acceso restringido a super administradores.",
+        )
+    return payload

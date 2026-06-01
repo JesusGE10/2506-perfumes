@@ -3,9 +3,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dependencies import get_current_admin, get_db
+from app.dependencies import get_current_admin, get_current_superadmin, get_db
 from app.modules.auth import service
 from app.modules.auth.schemas import (
+    AdminCreate,
+    AdminListItem,
     AdminPasswordUpdate,
     AdminProfileUpdate,
     AdminResponse,
@@ -83,3 +85,46 @@ async def update_settings(
     """Update stock traffic-light thresholds and other per-admin settings."""
     settings = await service.update_settings(db, payload["sub"], data)
     return settings
+
+
+# ─── Super-admin: Admin User Management ──────────────────────────────────────
+
+@router.get(
+    "/admin/users",
+    response_model=list[AdminListItem],
+    dependencies=[Depends(get_current_superadmin)],
+)
+async def list_admins(
+    payload: dict = Depends(get_current_superadmin),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all admin accounts except the requestor. Super-admin only."""
+    return await service.list_admins(db, exclude_id=payload["sub"])
+
+
+@router.post(
+    "/admin/users",
+    response_model=AdminListItem,
+    status_code=201,
+    dependencies=[Depends(get_current_superadmin)],
+)
+async def create_admin(
+    data: AdminCreate,
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new admin account. Super-admin only."""
+    return await service.create_admin(db, data)
+
+
+@router.patch(
+    "/admin/users/{target_id}/toggle",
+    response_model=AdminListItem,
+    dependencies=[Depends(get_current_superadmin)],
+)
+async def toggle_admin(
+    target_id: str,
+    payload: dict = Depends(get_current_superadmin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Toggle an admin account active/inactive. Super-admin only. Cannot self-deactivate."""
+    return await service.toggle_admin_activo(db, target_id=target_id, requestor_id=payload["sub"])

@@ -66,3 +66,40 @@ class AdminSettingsUpdate(BaseModel):
         if v < 0:
             raise ValueError("El umbral debe ser un número positivo")
         return v
+
+
+# ─── Super-admin: Admin User Management ──────────────────────────────────────
+
+class AdminCreate(BaseModel):
+    """Payload to create a new admin user (super_admin only)."""
+    email: EmailStr
+    password: str
+    nombre: str
+    rol: str = "admin"
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if len(v) < 6:
+            raise ValueError("La contraseña debe tener al menos 6 caracteres")
+        return v
+
+    @field_validator("rol")
+    @classmethod
+    def validate_rol(cls, v: str) -> str:
+        if v not in ("admin", "super_admin"):
+            raise ValueError("Rol inválido. Debe ser 'admin' o 'super_admin'")
+        return v
+
+
+class AdminListItem(BaseModel):
+    """Compact admin user representation for the management list."""
+    id: uuid.UUID
+    email: str
+    nombre: str
+    rol: str
+    activo: bool = True
+    created_at: datetime
+    last_login: datetime | None
+
+    model_config = {"from_attributes": True}

@@ -47,6 +47,11 @@ class AdminUser(Base):
         nullable=False,
         server_default="admin",
     )
+    # Controls whether this admin can log in. Deactivated admins are rejected
+    # at the login step. Using a flag instead of deletion preserves audit history.
+    activo: Mapped[bool] = mapped_column(
+        Boolean, default=True, nullable=False, server_default="true"
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
