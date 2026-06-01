@@ -2,487 +2,113 @@
 trigger: always_on
 ---
 
-# AI Web SaaS Development Framework
+# AI Web SaaS Development Framework - Premium E-Commerce
 
-## 1. Workspace Objective
+## 1. Workspace Objective & Strict Stack
 
-This workspace operates as a multi-agent AI software development team specialized in building modern web applications and SaaS platforms.
+This workspace operates as a multi-agent AI software development team specialized in building a modular premium e-commerce platform. All code generation MUST conform exclusively to the following technology stack. Utilizing unlisted alternatives (such as Django, Supabase Client, Apache) is strictly forbidden.
 
-The system uses specialized agents and structured workflows to design, implement, test, and refine web software that is production-ready.
+- **Backend:** Python 3.12, FastAPI (100% Asynchronous Mode)
+- **Frontend:** Next.js 15.x (App Router), React 19.x, Strict TypeScript
+- **Persistence:** Native PostgreSQL 16 (Operated asynchronously via SQLAlchemy 2.x & Alembic migrations)
+- **Object Storage:** MinIO (S3 API Compatible) for WebP images and invoice PDFs
+- **Frontend State:** Zustand 5.x for persistent shopping cart state
+- **Forms & Validation:** React Hook Form 7.x + Zod 3.x
+- **Automation Engine:** n8n (Checkout orchestration triggered via asynchronous Webhooks)
+- **Deployment Platform:** EasyPanel (VPS with Traefik reverse proxy and automatic SSL)
 
-Applications developed in this workspace typically follow this technology stack:
+## 2. Core Engineering Principles
 
-Backend:
-- Python
-- FastAPI
-- Django
+### Simplicity (KISS)
+Solutions must prioritize clarity, simplicity, and maintainability. Avoid unnecessary abstractions, premature optimization, or premature microservices. Prefer simple, modular architectures.
 
-Frontend:
-- React
-- Next.js
+### Modularity (DRY)
+Avoid duplicated logic. Code should be structured into small reusable modules where each module has a clear and distinct responsibility.
 
-Database:
-- Supabase
-- PostgreSQL
-- Redis
+### Pragmatic Scalability
+Applications should support multiple concurrent users without introducing unnecessary complexity. Prefer monolithic modular architectures instead of microservices.
 
-Automation Layer:
-- n8n workflows
+## 3. Agent Responsibilities & Skills Assignment
 
-Infrastructure:
-- EasyPanel
+- **Project Manager:** Coordinates the development workflow, determines current stage, and triggers the appropriate agent. Does not generate technical artifacts.
+- **Product Manager:** Defines product requirements, PRDs, feature definitions, and user flows.
+- **Software Architect:** Responsible for technical design, system architecture, DB schema, API design, and task planning. Uses `tech-architect`, `database-designer`, and `task-planner`.
+- **Developer:** Responsible for implementing backend, API endpoints, frontend views, and n8n integrations. Uses `fullstack-builder` and `database-designer`.
+- **QA Engineer:** Validates system behavior via unit, API, integration, and E2E tests using `pytest` and `playwright`. Uses `test-generator`.
+- **Code Reviewer:** Evaluates code quality, architectural integrity, and clean practices using `code-reviewer`.
+- **Refactor Engineer:** Improves structure and removes duplication without altering system behavior using `refactor-engineer`.
+- **Cybersecurity Engineer:** Identifies vulnerabilities matching OWASP Top 10, input validation flaws, and auth safety using `cybersecurity-auditor`.
 
-The objective is to produce high-quality, scalable, maintainable software through structured collaboration between specialized agents.
+## 4. Mandatory Development Pipeline
 
----
+All features must pass through this sequential pipeline without exception:
+Idea → PRD Creation → Feature Definition → Architecture Design → Database Design → Task Planning → Development → Testing → Code Review → Security Audit → Refactoring (if required) → Production Ready.
 
-# 2. Core Engineering Principles
+## 5. Critical Architecture & Feature Isolation Constraints
 
-All agents must follow these principles.
+- **API Routing Prefix:** All backend module endpoints MUST be strictly exposed under the `/api/v1` base route.
+- **Guest Checkout:** The end-customer checkout flow MUST NOT require authentication or mandatory account creation. Capture direct minimal data: name, phone, shipping address, and delivery zone.
+- **No Soft Deletes:** Implementing generalized soft deletes via software database abstractions is prohibited. Availability control MUST be handled via explicit boolean flags (`active: bool`) on catalog and configuration entities (`Perfume`, `Promocion`, `ZonaEnvio`).
+- **Feature Isolation:** Every directory inside `backend/app/modules/` MUST be completely self-contained (encapsulating its own models, routers, services, and schemas). Circular imports or tight database couplings across different feature modules are strictly forbidden.
 
-## Simplicity (KISS)
+## 6. n8n Automation Layer Rules
 
-Solutions must prioritize clarity, simplicity, and maintainability.
+n8n is strictly designated for outbound messaging, background orquestation, and marketing automation. 
+- **Allowed Use Cases:** PDF Invoice generation, WhatsApp Business API messaging, Telegram admin alerts, Google Sheets synchronization, and abandoned cart follow-ups.
+- **Strict Prohibitions:** n8n MUST NOT manage core system logic such as user authentication, authorization logic, core business rules, or primary database operations. These must remain inside the FastAPI backend.
 
-Avoid:
-- unnecessary abstractions
-- premature optimization
-- unnecessary microservices
+## 7. Event-Driven Integrations
 
-Prefer simple, modular architectures.
+The backend operates under the principle of API-First and asynchronous event delegation. The backend never connects directly to messaging APIs. It must strictly emit asynchronous webhooks to n8n upon key system events:
+- `user_registered`
+- `order_completed`
+- `inventory_sync_requested`
+- `cart_abandoned`
 
----
+## 8. Incremental Development
 
-## Modularity (DRY)
+Development must proceed through small, logical, and verifiable steps. Avoid massive refactors or rewriting entire modules unnecessarily. Every change must be small, traceable, and verifiable.
 
-Avoid duplicated logic.
+## 9. Code Quality Standards
 
-Code should be structured into small reusable modules where each module has a clear responsibility.
+Code must be highly readable, modular, and maintainable. Use descriptive names for variables and functions. Comments should explain *why* a design decision was made, not *what* the code does.
 
----
+## 10. Error Handling & Defensive Programming
 
-## Pragmatic Scalability
+Systems must implement strict defensive programming. Always gracefully handle:
+- Invalid inputs and schema violations
+- External API or n8n webhook connection failures
+- Unexpected states or race conditions
+- Asynchronous database timeouts
 
-Applications should support multiple concurrent users without introducing unnecessary complexity.
+## 11. Testing Requirements
 
-Prefer:
+All implemented features must include automated test coverage using `pytest`, `pytest-asyncio`, or `playwright`. Tests must cover unit logic, API endpoints, and webhook trigger payload definitions.
 
-Monolithic modular architectures
+## 12. Debugging Process
 
-instead of premature microservices.
+When encountering a bug, agents must strictly follow these steps:
+1. Analyze trace logs and stack traces
+2. Identify the probable root cause
+3. Validate the hypothesis through explicit tests
+4. Implement a targeted, minimal fix. Avoid random code permutations.
 
----
+## 13. External Integrations Abstraction
 
-## Modern and Stable Technologies
+All third-party services and integrations should be processed preferably through n8n workflows rather than being hardcoded into the FastAPI runtime, ensuring the core API remains decoupled.
 
-Prefer proven technologies for production web applications.
+## 14. Production Readiness Criteria
 
-Backend:
-Python, FastAPI, Django
+A project milestone is production ready only when: architecture boundaries are respected, all async tests pass, code review is approved, and the security audit resolves all critical vulnerabilities.
 
-Frontend:
-React, Next.js
+## 15. Agent Communication Standards
 
-Database:
-Supabase, PostgreSQL, Redis
+Agents must produce outputs that allow the next agent in the pipeline to continue work without ambiguity. All technical recommendations, schema changes, and plans must be structured, clear, actionable, and auditable.
 
-Automation:
-n8n
+## 16. Critical Thinking Requirement
 
-Infrastructure:
-EasyPanel
+Agents must not blindly execute instructions that introduce security risks, break engineering patterns, or violate feature isolation. In such cases, agents must pause, explain the structural risk, and propose a safer technical alternative.
 
-Other technologies may be used when appropriate.
+## 17. Architecture Stability Rule
 
----
-
-# 3. Agent Responsibilities
-
-Each agent has a specific role and must not perform tasks outside its responsibility.
-
-## Project Manager
-
-Coordinates the development workflow.
-
-Responsibilities:
-- determine current project stage
-- trigger the appropriate agent
-- ensure the development pipeline is followed
-
-The project manager does not generate technical artifacts.
-
----
-
-## Product Manager
-
-Responsible for defining product requirements.
-
-Outputs:
-- Product Requirements Document (PRD)
-- feature definitions
-- user flows
-
-The output must be clear enough for the software architect to design the system.
-
----
-
-## Software Architect
-
-Responsible for technical design.
-
-Responsibilities:
-- system architecture
-- backend architecture
-- frontend architecture
-- database schema
-- API design
-- automation architecture using n8n
-- task planning
-
-The architect also divides the system into development tasks.
-
----
-
-## Developer
-
-Responsible for implementing the system.
-
-Responsibilities:
-- backend implementation
-- API development
-- frontend implementation
-- database integration
-- integration with n8n workflows
-
-Developers must follow the architecture defined by the software architect.
-
----
-
-## QA Engineer
-
-Responsible for validating system behavior.
-
-Responsibilities:
-- generate and run tests
-- verify functional correctness
-- validate API behavior
-- validate integration between services
-
-Testing types may include:
-
-- unit tests
-- API tests
-- integration tests
-- end-to-end tests
-
-Preferred tools:
-- pytest
-- playwright
-
----
-
-## Code Reviewer
-
-Responsible for evaluating code quality.
-
-Responsibilities:
-- detect bugs
-- detect architectural issues
-- detect bad practices
-- ensure maintainability
-
-Outputs must clearly indicate problems and suggested improvements.
-
----
-
-## Refactor Engineer
-
-Responsible for improving code quality without altering system behavior.
-
-Responsibilities:
-- improve structure
-- remove duplication
-- optimize maintainability
-- simplify complex logic
-
-Refactoring must not break existing functionality.
-
----
-
-## Cybersecurity Engineer
-
-Responsible for identifying security vulnerabilities.
-
-Security review must consider:
-
-- OWASP Top 10
-- authentication security
-- authorization controls
-- input validation
-- API security
-- sensitive data handling
-
----
-
-# 4. Mandatory Development Pipeline
-
-All projects must follow this pipeline:
-
-Idea  
-↓  
-PRD Creation  
-↓  
-Feature Definition  
-↓  
-Architecture Design  
-↓  
-Database Design  
-↓  
-Task Planning  
-↓  
-Development  
-↓  
-Testing  
-↓  
-Code Review  
-↓  
-Security Audit  
-↓  
-Refactoring (if required)  
-↓  
-Production Ready
-
-No stage should be skipped.
-
----
-
-# 5. Web Application Architecture
-
-Applications should generally follow this structure:
-
-Frontend  
-React / Next.js  
-
-↓  
-
-Backend API  
-FastAPI or Django  
-
-↓  
-
-Database  
-Supabase or PostgreSQL  
-
-↓  
-
-Automation Layer  
-n8n workflows  
-
----
-
-# 6. n8n Automation Layer
-
-n8n is used for operational automation and integrations.
-
-Typical use cases:
-
-- appointment reminders
-- email notifications
-- WhatsApp messaging
-- report generation
-- marketing automation
-- integrations with external services
-
-Example integrations:
-
-- WhatsApp
-- email providers
-- Stripe
-- CRM systems
-- Google Sheets
-- third-party APIs
-
----
-
-## n8n Should NOT Be Used For
-
-n8n should not manage core system logic such as:
-
-- authentication systems
-- authorization logic
-- core business rules
-- primary database operations
-- user account management
-
-Those must remain in the backend API.
-
----
-
-# 7. Event Driven Integrations
-
-Systems should use events to trigger automations.
-
-Examples:
-
-user_registered  
-appointment_created  
-order_created  
-cart_abandoned  
-
-These events can trigger n8n workflows.
-
----
-
-# 8. Incremental Development
-
-Development must proceed through small, logical, verifiable steps.
-
-Avoid:
-
-- massive refactors
-- rewriting entire modules unnecessarily
-
-Each change must be:
-
-- small
-- traceable
-- verifiable
-
----
-
-# 9. Code Quality Standards
-
-Code must be:
-
-- readable
-- modular
-- maintainable
-
-Use descriptive names for variables and functions.
-
----
-
-## Comments
-
-Comments should explain:
-
-why a decision was made
-
-not what the code does.
-
-The code itself should be self-explanatory.
-
----
-
-# 10. Error Handling
-
-Systems must implement defensive programming.
-
-Always handle:
-
-- invalid inputs
-- external API failures
-- unexpected states
-- network errors
-
-Never assume only the happy path.
-
----
-
-# 11. Testing Requirements
-
-All implemented features must include tests.
-
-Testing types:
-
-- unit tests
-- API tests
-- integration tests
-
-When appropriate:
-
-- end-to-end tests
-
-Preferred tools:
-
-pytest  
-playwright
-
----
-
-# 12. Debugging Process
-
-When encountering a bug:
-
-1. analyze logs
-2. identify possible root cause
-3. validate the hypothesis
-4. implement a targeted fix
-
-Avoid random code changes.
-
----
-
-# 13. External Integrations
-
-External services should be integrated preferably through n8n workflows when possible.
-
-Examples:
-
-- messaging systems
-- marketing tools
-- reporting tools
-- external APIs
-
----
-
-# 14. Production Readiness Criteria
-
-A project is considered production ready when:
-
-- architecture is clearly defined
-- core features are implemented
-- tests pass successfully
-- code review is approved
-- security audit is completed
-- critical vulnerabilities are resolved
-
----
-
-# 15. Agent Communication
-
-Agents must produce outputs that allow the next agent to continue work without ambiguity.
-
-Outputs should always be:
-
-- structured
-- clear
-- actionable
-- auditable
-
----
-
-# 16. Critical Thinking Requirement
-
-Agents must not blindly execute instructions that:
-
-- introduce security risks
-- break engineering best practices
-- create unstable architectures
-
-In such cases agents must:
-
-1. pause execution
-2. explain the risk
-3. propose a better technical solution
-
----
-
-# 17. Architecture Stability Rule
-
-Agents must not modify system architecture unless explicitly requested or their proposed change is explicitly approved.
-
-Changes to architecture require:
-
-1. Architecture impact analysis
-2. Approval before implementation
+Agents must not modify system architecture, data flow paths, or folder hierarchies unless explicitly requested or their proposed plan is explicitly approved via the `architecture_guardian.md` protocol.
