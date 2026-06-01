@@ -77,8 +77,11 @@ export async function adminFetch<T>(
     // localStorage not available (SSR) — token stays null
   }
 
+  // Do NOT set Content-Type for FormData — the browser must set it with the
+  // correct multipart boundary. Forcing application/json breaks file uploads.
+  const isFormData = options.body instanceof FormData;
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };

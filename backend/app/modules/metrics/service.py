@@ -48,8 +48,13 @@ async def get_dashboard_metrics(db: AsyncSession) -> dict:
         return float(result.scalar_one())
 
     async def orders_count_in(start: datetime) -> int:
+        # Solo pedidos CONFIRMADOS para alinear con las métricas de ingresos.
+        # Pedidos pendientes/cancelados no se contabilizan como ventas reales.
         result = await db.execute(
-            select(func.count()).where(Pedido.created_at >= start)
+            select(func.count()).where(
+                Pedido.estado == EstadoPedidoEnum.CONFIRMADO,
+                Pedido.created_at >= start,
+            )
         )
         return int(result.scalar_one())
 
