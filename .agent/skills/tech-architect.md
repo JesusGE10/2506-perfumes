@@ -1,88 +1,38 @@
 SKILL NAME
-
 tech-architect
 
-
-
 CATEGORY
-
 architecture
 
-
-
 PURPOSE
-
-Diseñar la arquitectura técnica del sistema basándose en el PRD y las features definidas.
-
-
-
-WHEN TO USE
-
-Después de tener PRD y lista de features.
-
-
-
-INPUTS
-
-
-
-\- PRD
-
-\- features
-
-
+Design decoupled, asynchronous, scalable modular architectures, establishing strict API-First boundaries, database index plans, and automation separation rules.
 
 INSTRUCTIONS
+1. **Enforce the Modular Monolith:** Map all core data mechanics exclusively inside `backend/app/modules/`. Reject any rigid inter-module dependencies.
+2. **Enforce the Base URL Strategy:** Architect all application routes strictly under the `/api/v1` global prefix schema.
+3. **PostgreSQL 16 Advanced Invariants:** Design model data definitions relying on native `UUID` tokens for keys, index mapping strategies via `tsvector` with GIN indexes for full-text search, and explicit `active` boolean availability fields.
+4. **Isolate Automation Interactions:** Force direct event isolation. Backend routes must never run third-party SDK clients for external alerts. They must simply fire out asynchronous webhooks to n8n upon state mutations.
 
-
-
-1\. Analiza requisitos funcionales y no funcionales.
-
-2\. Define arquitectura general del sistema.
-
-3\. Define arquitectura de automatización usando flujos de n8n.
-
-4\. Selecciona stack tecnológico adecuado.
-
-5\. Diseña componentes del sistema.
-
-6\. Define interacción entre servicios.
-
-7\. Define cuales procesos corren en n8n y cuales deben correr en el backend. 
-
-8\. Define estrategia de escalabilidad.
-
-
-
-BEST PRACTICES
-
-
-
-\- Priorizar simplicidad.
-
-\- Evitar microservicios innecesarios.
-
-\- Usar tecnologías maduras.
-
-\- Favorecer Python y frameworks modernos.
-
-\- Usar n8n para automatizaciones.
-
-
+INPUT
+- docs/prd.md
+- docs/architecture.md
 
 OUTPUT FORMAT
+### System Architecture Design Blueprint
 
+#### 1. Modular Architecture Overview
+- **Target Context Layer:** Premium Replicable E-Commerce
+- **API Boundary Structure:** `/api/v1` Route Mapping Architecture
+- **Data Flow Topography:** [Detail the asynchronous communication layout between FastAPI and n8n]
 
+#### 2. Database & Storage Architecture
+- **Table Layout Schema:** [Detail primary keys, indexes, and relations]
+- **Indexing Strategy:** Full-Text Search layout via `tsvector` + GIN indexing over product catalogs
+- **Object Storage Map:** MinIO layout for WebP optimization assets and transaction invoice PDFs
 
-Architecture Overview
+#### 3. Automation Layer Blueprint
+- **Event Dispatchers Matrix:** Mapping system mutations to W1, W2, W3, W4, or W5 webhooks
+- **Payload Data Contracts:** Explicit JSON event structures
 
-Technology Stack
-
-System Components
-
-Service Interactions
-
-Scalability Strategy
-
-Technical Risks
-
+#### 4. Architecture Risk Vectors
+- [Identify race conditions on stock synchronization, missing greenlet loops, or token leakage, and outline exact mitigation logic]
