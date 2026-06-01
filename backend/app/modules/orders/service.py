@@ -14,7 +14,7 @@ Flow:
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -321,14 +321,33 @@ async def discard_order(db: AsyncSession, order_id: uuid.UUID) -> Pedido:
 async def list_orders(
     db: AsyncSession,
     estado: EstadoPedidoEnum | None = None,
+    q: str | None = None,
     page: int = 1,
     size: int = 20,
 ) -> tuple[list[Pedido], int]:
+    """List paginated orders with optional status and text search filters.
+
+    Args:
+        q: Free-text search over cliente_nombre and cliente_telefono (ILIKE).
+    """
     from sqlalchemy import func
 
     query = select(Pedido)
+
     if estado:
         query = query.where(Pedido.estado == estado)
+
+    if q:
+        # Case-insensitive search over name and phone — lets admin locate
+        # orders quickly without knowing the exact spelling.
+        term = f"%{q.strip()}%"
+        query = query.where(
+            or_(
+                Pedido.cliente_nombre.ilike(term),
+                Pedido.cliente_telefono.ilike(term),
+            )
+        )
+
     query = query.order_by(Pedido.created_at.desc())
 
     count_result = await db.execute(

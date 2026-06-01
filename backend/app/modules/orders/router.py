@@ -85,12 +85,13 @@ async def get_orders_summary(db: AsyncSession = Depends(get_db)):
 )
 async def list_orders(
     estado: EstadoPedidoEnum | None = None,
+    q: str | None = Query(None, description="Búsqueda por nombre de cliente o teléfono"),
     page: Annotated[int, Query(ge=1)] = 1,
     size: Annotated[int, Query(ge=1, le=100)] = 20,
     db: AsyncSession = Depends(get_db),
 ):
-    """List all orders with optional status filter. Admin only."""
-    items, total = await service.list_orders(db, estado=estado, page=page, size=size)
+    """List all orders with optional status filter and text search. Admin only."""
+    items, total = await service.list_orders(db, estado=estado, q=q, page=page, size=size)
     return PaginatedResponse.create(items=items, total=total, page=page, size=size)
 
 

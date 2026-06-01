@@ -9,7 +9,7 @@
  * - Status filter tabs + pagination
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { adminFetch } from '@/lib/api';
 import type { PedidoResponse, PaginatedResponse, EstadoPedidoEnum, OrdersSummary } from '@/lib/types';
 import styles from '../admin.module.css';
@@ -214,6 +214,9 @@ export default function AdminOrdersPage() {
   } | null>(null);
 
   const pageSize = 20;
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -221,6 +224,7 @@ export default function AdminOrdersPage() {
     try {
       const params = new URLSearchParams({ page: String(page), size: String(pageSize) });
       if (filterStatus) params.set('estado', filterStatus);
+      if (search) params.set('q', search);
       const [data, sum] = await Promise.all([
         adminFetch<PaginatedResponse<PedidoResponse>>(`/admin/orders?${params.toString()}`),
         adminFetch<OrdersSummary>('/admin/orders/summary'),
@@ -233,7 +237,7 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, filterStatus]);
+  }, [page, filterStatus, search]);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
@@ -241,6 +245,22 @@ export default function AdminOrdersPage() {
 
   function openConfirm(orderId: string, type: 'confirm' | 'discard') {
     setModal({ type, orderId, loading: false });
+  }
+
+  // Debounced search handler — waits 400ms after last keystroke
+  function handleSearchChange(value: string) {
+    setSearchInput(value);
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => {
+      setSearch(value);
+      setPage(1);
+    }, 400);
+  }
+
+  function clearSearch() {
+    setSearchInput('');
+    setSearch('');
+    setPage(1);
   }
 
   async function executeAction() {
@@ -291,6 +311,36 @@ export default function AdminOrdersPage() {
         <div>
           <h1 className={styles.pageTitle}>Pedidos</h1>
           <p className={styles.pageSubtitle}>{total} pedido{total !== 1 ? 's' : ''} en total</p>
+        </div>
+        {/* Search bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ position: 'relative' }}>
+            <input
+              id="orders-search"
+              type="text"
+              value={searchInput}
+              onChange={e => handleSearchChange(e.target.value)}
+              placeholder="Buscar cliente o teléfono..."
+              style={{
+                padding: '9px 36px 9px 14px', borderRadius: 8,
+                border: '1.5px solid', width: 240,
+                borderColor: search ? '#b8761e' : '#d9d4cd',
+                background: search ? '#fdf5e8' : '#faf9f7',
+                fontSize: '0.83rem', outline: 'none',
+                color: '#1a1410',
+              }}
+            />
+            {searchInput && (
+              <button
+                onClick={clearSearch}
+                style={{
+                  position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: '#9e8f7e', fontSize: '0.9rem', padding: 2, lineHeight: 1,
+                }}
+              >✕</button>
+            )}
+          </div>
         </div>
       </div>
 
