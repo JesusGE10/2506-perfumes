@@ -11,7 +11,7 @@ import enum
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -38,12 +38,9 @@ class AdminUser(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
     foto_perfil_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    rol: Mapped[str] = mapped_column(
-        # Using String here to avoid SQLAlchemy↔PostgreSQL enum value mapping issues.
-        # The PostgreSQL enum type is 'admin_rol_enum' with values: super_admin, admin.
-        # Python-side validation uses AdminRolEnum. DB stores the string value directly.
-        String(20),
-        default="admin",
+    rol: Mapped[AdminRolEnum] = mapped_column(
+        Enum(AdminRolEnum, name="admin_rol_enum", values_callable=lambda x: [e.value for e in x]),
+        default=AdminRolEnum.ADMIN,
         nullable=False,
         server_default="admin",
     )

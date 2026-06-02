@@ -18,6 +18,7 @@ from app.modules.products.schemas import (
     PerfumeSummaryResponse,
     PerfumeUpdate,
     ProductFilters,
+    PresentacionUpdate,
 )
 
 router = APIRouter(tags=["products"])
@@ -188,11 +189,10 @@ async def update_product(
 async def update_presentation(
     product_id: uuid.UUID,
     presentation_id: uuid.UUID,
-    data: "PresentacionUpdate",
+    data: PresentacionUpdate,
     db: AsyncSession = Depends(get_db),
 ):
     """Inline update of a presentation's price, stock, or size. Admin only."""
-    from app.modules.products.schemas import PresentacionUpdate
     pres = await service.update_presentation(db, product_id, presentation_id, data)
     return {"id": str(pres.id), "tamano_ml": pres.tamano_ml, "precio": float(pres.precio), "stock": pres.stock}
 
