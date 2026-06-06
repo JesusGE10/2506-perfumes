@@ -70,48 +70,20 @@ async def get_newest(db: AsyncSession = Depends(get_db)):
     return await service.get_newest_products(db)
 
 
-@router.get(f"{PREFIX_PUBLIC}/fix-images", response_model=dict)
-async def fix_images_endpoint(db: AsyncSession = Depends(get_db)):
-    """TEMPORARY BUGFIX ENDPOINT"""
-    result = await db.execute(select(Perfume))
-    perfumes = result.scalars().all()
-    count = 0
-    images = [
-        "/productos/perfume_gold.png",
-        "/productos/perfume_dark.png",
-        "/productos/perfume_floral.png",
-        "/productos/perfume_oud.png"
-    ]
-    for i, p in enumerate(perfumes):
-        img_result = await db.execute(select(Imagen).where(Imagen.perfume_id == p.id))
-        imgs = img_result.scalars().all()
-        if not imgs:
-            new_img = Imagen(
-                perfume_id=p.id,
-                url=images[i % len(images)],
-                orden=0,
-                es_principal=True
-            )
-            db.add(new_img)
-            count += 1
-        else:
-            for existing in imgs:
-                existing.url = images[i % len(images)]
-                count += 1
-    await db.commit()
-    return {"message": f"Fixed {count} images"}
 
-@router.get(f"{PREFIX_PUBLIC}/dump-images", response_model=dict)
-async def dump_images_endpoint(db: AsyncSession = Depends(get_db)):
-    """TEMPORARY BUGFIX ENDPOINT"""
-    result = await db.execute(select(Perfume).options(selectinload(Perfume.imagenes)))
-    perfumes = result.scalars().all()
-    mapping = {}
-    for p in perfumes:
-        if p.imagenes:
-            img = next((i.url for i in p.imagenes if i.es_principal), p.imagenes[0].url)
-            mapping[p.slug] = img
-    return mapping
+@router.get(f"{PREFIX_PUBLIC}/notes", response_model=list[dict])
+async def list_notes(db: AsyncSession = Depends(get_db)):
+    """Return all olfactive notes for controlled-vocabulary selectors. Public."""
+    from app.modules.products.models import NotaOlfativa
+    result = await db.execute(
+        select(NotaOlfativa).order_by(NotaOlfativa.familia.asc(), NotaOlfativa.nombre.asc())
+    )
+    notes = result.scalars().all()
+    return [
+        {"id": str(n.id), "nombre": n.nombre, "familia": n.familia.value}
+        for n in notes
+    ]
+
 
 @router.get(
     f"{PREFIX_PUBLIC}/{{slug}}", response_model=PerfumeDetailResponse

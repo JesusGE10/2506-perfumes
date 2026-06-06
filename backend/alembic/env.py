@@ -48,6 +48,7 @@ from app.modules.promotions.models import (  # noqa: F401
     Promocion,
     PromocionProducto,
 )
+from app.modules.store.models import StoreConfig  # noqa: F401
 
 target_metadata = Base.metadata
 

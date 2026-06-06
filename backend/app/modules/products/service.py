@@ -293,9 +293,35 @@ async def update_product(
     if not product:
         raise NotFoundException(f"Perfume con id '{product_id}' no encontrado")
 
+    # ── Guardia: no se puede activar un producto sin imágenes ────────────────────
+    # Un producto sin imagen no puede mostrarse en el catálogo — la imagen
+    # es el principal driver de venta en este e-commerce.
+    if data.activo is True:
+        img_count = await db.scalar(
+            select(func.count()).where(Imagen.perfume_id == product_id)
+        )
+        if (img_count or 0) == 0:
+            raise ConflictException(
+                "El producto necesita al menos una imagen para ser publicado. "
+                "Sube una imagen primero y luego actívalo."
+            )
+
     if data.nombre is not None:
+        new_slug = slugify(data.nombre)
+        # ── Bug fix: verificar colisión de slug antes de asignar ─────────────
+        # Sin este check, renombrar un producto a un nombre ya existente
+        # produce un UniqueViolationError no controlado → HTTP 500.
+        if new_slug != product.slug:
+            existing = await db.execute(
+                select(Perfume).where(
+                    Perfume.slug == new_slug, Perfume.id != product_id
+                )
+            )
+            if existing.scalar_one_or_none():
+                new_slug = f"{new_slug}-{uuid.uuid4().hex[:6]}"
         product.nombre = data.nombre
-        product.slug = slugify(data.nombre)
+        product.slug = new_slug
+
     if data.marca_id is not None:
         await _assert_brand_exists(db, data.marca_id)
         product.marca_id = data.marca_id
