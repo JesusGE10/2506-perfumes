@@ -243,6 +243,10 @@ class Imagen(Base):
         index=True,
     )
     url: Mapped[str] = mapped_column(String(500), nullable=False)
+    # s3_key stores the R2 object key (e.g. "products/{id}/{uuid}.webp") so we
+    # can delete the object from R2 without parsing the public URL.
+    # nullable=True for backwards compatibility with legacy /productos/*.png records.
+    s3_key: Mapped[str | None] = mapped_column(String(500), nullable=True)
     orden: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     es_principal: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False
@@ -252,3 +256,4 @@ class Imagen(Base):
     perfume: Mapped["Perfume"] = relationship(
         back_populates="imagenes", lazy="selectin"
     )
+

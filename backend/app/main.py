@@ -80,6 +80,13 @@ def create_app() -> FastAPI:
 
     app.include_router(metrics_router, prefix="/api/v1")
 
+    # --- Routers (Phase 6 — Media & Store config) ---
+    from app.modules.media.router import router as media_router
+    from app.modules.store.router import router as store_router
+
+    app.include_router(media_router, prefix="/api/v1")
+    app.include_router(store_router, prefix="/api/v1")
+
     return app
 
 
