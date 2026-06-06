@@ -18,10 +18,13 @@ import type { AdminUser } from '@/lib/types';
 import styles from './admin.module.css';
 
 const BASE_NAV_ITEMS = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
-  { href: '/admin/orders',    label: 'Pedidos',    icon: '🛍️' },
-  { href: '/admin/products',  label: 'Productos',  icon: '🧴' },
-  { href: '/admin/ajustes',   label: 'Ajustes',    icon: '⚙️' },
+  { href: '/admin/dashboard',   label: 'Dashboard',   icon: '📊' },
+  { href: '/admin/orders',      label: 'Pedidos',      icon: '🛍️' },
+  { href: '/admin/products',    label: 'Productos',    icon: '🧴' },
+  { href: '/admin/brands',      label: 'Marcas',       icon: '🏷️' },
+  { href: '/admin/categories',  label: 'Categorías',   icon: '🗂️' },
+  { href: '/admin/promotions',  label: 'Promociones',  icon: '🎁' },
+  { href: '/admin/ajustes',     label: 'Ajustes',      icon: '⚙️' },
 ];
 
 const SUPER_ADMIN_NAV = [
