@@ -13,6 +13,7 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
@@ -71,6 +72,13 @@ class Pedido(Base):
     """Customer order with delivery info and totals."""
 
     __tablename__ = "pedido"
+
+    # Composite index covering all metrics queries that filter by status + date.
+    # Single-column indexes on estado and created_at are kept for simple filters;
+    # the composite index accelerates the combined WHERE clauses used by the dashboard.
+    __table_args__ = (
+        Index("ix_pedido_estado_created_at", "estado", "created_at"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
