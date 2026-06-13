@@ -368,7 +368,20 @@ export default function AdminProductsPage() {
                           }
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{product.nombre}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                            <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{product.nombre}</span>
+                            {/* ⚠️ Sin imagen badge */}
+                            {!mainImageUrl && (
+                              <span title="Este producto no tiene imagen y no se mostrará al público" style={{
+                                background: '#fffbeb', border: '1px solid #fde68a',
+                                borderRadius: 99, padding: '1px 7px',
+                                fontSize: '0.62rem', fontWeight: 800, color: '#92400e',
+                                cursor: 'default', flexShrink: 0,
+                              }}>
+                                ⚠️ Sin imagen
+                              </span>
+                            )}
+                          </div>
                           <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
                             desde {formatCurrency(minPrice)} · {product.presentaciones.length} presentación{product.presentaciones.length !== 1 ? 'es' : ''}
                           </div>
@@ -384,16 +397,21 @@ export default function AdminProductsPage() {
                       <button
                         id={`toggle-active-${product.id}`}
                         onClick={e => { e.stopPropagation(); handleToggleActive(product); }}
+                        title={!mainImageUrl && !product.activo ? 'Sube una imagen antes de activar este producto' : undefined}
+                        disabled={!product.activo && !mainImageUrl}
                         style={{
                           padding: '4px 12px', borderRadius: 999, border: 'none',
-                          background: product.activo ? '#d1f2d3' : '#f8d7da',
-                          color: product.activo ? '#166327' : '#721c24',
-                          fontWeight: 700, fontSize: '0.7rem', cursor: 'pointer',
+                          background: product.activo ? '#d1f2d3' : !mainImageUrl ? '#f0ede8' : '#f8d7da',
+                          color: product.activo ? '#166327' : !mainImageUrl ? '#9a8a7a' : '#721c24',
+                          fontWeight: 700, fontSize: '0.7rem',
+                          cursor: !product.activo && !mainImageUrl ? 'not-allowed' : 'pointer',
+                          opacity: !product.activo && !mainImageUrl ? 0.7 : 1,
                         }}
                       >
-                        {product.activo ? '● Activo' : '○ Inactivo'}
+                        {product.activo ? '● Activo' : !mainImageUrl ? '○ Sin imagen' : '○ Inactivo'}
                       </button>
                     </td>
+
                     <td>
                       <div className={styles.actionGroup} onClick={e => e.stopPropagation()}>
                         <Link

@@ -2,24 +2,28 @@
 /**
  * Formulario de edición de producto — /admin/products/[id]/editar
  *
- * Carga el producto existente y permite:
- * - Editar información básica y flags
- * - Editar stock/precio de cada presentación inline
- * - Añadir nuevas presentaciones
- * - Eliminar presentaciones (solo las que no tienen pedidos)
+ * Features:
+ * - Información básica con selects controlados de Marca/Categoría
+ * - ImageUploadZone drag-and-drop para gestión de hasta 10 imágenes
+ * - NoteTagSelector para notas olfativas agrupadas por familia
+ * - Toggle "Activo" deshabilitado y con tooltip si el producto no tiene imágenes
+ * - Edición inline de stock/precio por presentación
+ * - Añadir/quitar presentaciones
  */
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { adminFetch } from '@/lib/api';
 import type { PerfumeDetailResponse } from '@/lib/types';
+import ImageUploadZone, { type ProductImage } from '@/components/admin/ImageUploadZone';
+import NoteTagSelector, { type NoteSelection } from '@/components/admin/NoteTagSelector';
 import styles from '../../../admin.module.css';
 
 interface Marca { id: string; nombre: string; slug: string; }
 interface Categoria { id: string; nombre: string; slug: string; }
 
 interface PresentacionForm {
-  id?: string;  // existing
+  id?: string;
   tamano_ml: number | '';
   precio: number | '';
   stock: number | '';
@@ -79,27 +83,34 @@ function SectionCard({ title, icon, children }: { title: string; icon: string; c
   );
 }
 
-function CheckToggle({ id, label, checked, onChange }: {
+function CheckToggle({ id, label, checked, onChange, disabled, disabledHint }: {
   id: string; label: string; checked: boolean; onChange: (v: boolean) => void;
+  disabled?: boolean; disabledHint?: string;
 }) {
   return (
-    <label htmlFor={id} style={{
-      display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
-      padding: '10px 14px', borderRadius: 8, border: '1px solid',
-      borderColor: checked ? '#b8761e' : '#d9d4cd',
-      background: checked ? '#fdf5e8' : '#faf9f7',
-    }}>
-      <input
-        id={id}
-        type="checkbox"
-        checked={checked}
-        onChange={e => onChange(e.target.checked)}
-        style={{ width: 16, height: 16, accentColor: '#b8761e' }}
-      />
-      <span style={{ fontSize: '0.82rem', fontWeight: 600, color: checked ? '#b8761e' : '#5a4a3a' }}>
-        {label}
-      </span>
-    </label>
+    <div title={disabled ? disabledHint : undefined}>
+      <label htmlFor={id} style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        padding: '10px 14px', borderRadius: 8, border: '1px solid',
+        borderColor: disabled ? '#e8e4df' : checked ? '#b8761e' : '#d9d4cd',
+        background: disabled ? '#f4f1ed' : checked ? '#fdf5e8' : '#faf9f7',
+        opacity: disabled ? 0.6 : 1,
+        transition: 'all 0.15s',
+      }}>
+        <input
+          id={id}
+          type="checkbox"
+          checked={checked}
+          onChange={e => !disabled && onChange(e.target.checked)}
+          disabled={disabled}
+          style={{ width: 16, height: 16, accentColor: '#b8761e' }}
+        />
+        <span style={{ fontSize: '0.82rem', fontWeight: 600, color: disabled ? '#9a8a7a' : checked ? '#b8761e' : '#5a4a3a' }}>
+          {label}
+        </span>
+      </label>
+    </div>
   );
 }
 
@@ -123,10 +134,16 @@ export default function EditarProductoPage() {
   const [esArabe, setEsArabe] = useState(false);
   const [esNuevo, setEsNuevo] = useState(false);
   const [presentaciones, setPresentaciones] = useState<PresentacionForm[]>([]);
+  const [images, setImages] = useState<ProductImage[]>([]);
+  const [selectedNotes, setSelectedNotes] = useState<NoteSelection[]>([]);
 
   const [saving, setSaving] = useState(false);
   const [savingPresId, setSavingPresId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Computed: can the product be activated?
+  const hasImages = images.length > 0;
+  const canActivate = hasImages;
 
   function showToast(message: string, type: 'success' | 'error' = 'success') {
     setToast({ message, type });
@@ -156,6 +173,28 @@ export default function EditarProductoPage() {
         stock: p.stock,
       })));
 
+      // Load images from product response
+      if (product.imagenes) {
+        const imgs: ProductImage[] = product.imagenes.map((img: any) => ({
+          id: img.id.toString(),
+          url: img.url,
+          s3_key: img.s3_key ?? null,
+          orden: img.orden ?? 0,
+          es_principal: img.es_principal ?? false,
+        }));
+        imgs.sort((a, b) => a.orden - b.orden);
+        setImages(imgs);
+      }
+
+      // Load notes if present
+      if (product.notas) {
+        setSelectedNotes(product.notas.map((n: any) => ({
+          id: n.nota_id ?? n.id,
+          nombre: n.nombre,
+          familia: n.familia,
+        })));
+      }
+
       const brandList = Array.isArray(brandData) ? brandData : (brandData.items ?? []);
       const catList = Array.isArray(catData) ? catData : (catData.items ?? []);
       setMarcas(brandList);
@@ -177,15 +216,12 @@ export default function EditarProductoPage() {
     setPresentaciones(prev => [...prev, { tamano_ml: '', precio: '', stock: 0, isNew: true }]);
   }
 
-  // Save individual presentation stock/price inline
   async function savePresentacion(idx: number) {
     const pres = presentaciones[idx];
     const key = pres.id ?? `new-${idx}`;
     setSavingPresId(key);
 
     if (pres.isNew) {
-      // Create new presentation via full product update approach
-      // We'll add it on the main save
       showToast('Presentación marcada para guardar. Usa "Guardar cambios" arriba.', 'success');
       setSavingPresId(null);
       return;
@@ -211,6 +247,10 @@ export default function EditarProductoPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!nombre.trim()) { showToast('El nombre es obligatorio', 'error'); return; }
+    if (activo && !hasImages) {
+      showToast('Debes subir al menos una imagen para activar el producto', 'error');
+      return;
+    }
 
     setSaving(true);
     try {
@@ -230,7 +270,7 @@ export default function EditarProductoPage() {
         }),
       });
 
-      // 2. Save all existing presentations inline
+      // 2. Save all existing presentations
       const existingPres = presentaciones.filter(p => p.id && !p.isNew);
       await Promise.all(existingPres.map(p =>
         adminFetch(`/admin/products/${productId}/presentations/${p.id}`, {
@@ -273,7 +313,20 @@ export default function EditarProductoPage() {
           }}>
             ← Volver a productos
           </button>
-          <h1 className={styles.pageTitle}>Editar producto</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <h1 className={styles.pageTitle}>Editar producto</h1>
+            {/* ⚠️ Sin imagen badge */}
+            {!hasImages && (
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                background: '#fffbeb', border: '1px solid #fde68a',
+                borderRadius: 99, padding: '4px 12px',
+                fontSize: '0.72rem', fontWeight: 800, color: '#92400e',
+              }}>
+                ⚠️ Producto incompleto — sin imagen
+              </span>
+            )}
+          </div>
           <p className={styles.pageSubtitle}>{nombre}</p>
         </div>
         <button
@@ -293,7 +346,16 @@ export default function EditarProductoPage() {
       </div>
 
       <form id="edit-product-form" onSubmit={handleSubmit}>
-        {/* Información básica */}
+        {/* ── Imágenes del producto ──────────────────────────────────────── */}
+        <SectionCard title="Imágenes del producto" icon="🖼️">
+          <ImageUploadZone
+            productId={productId}
+            initialImages={images}
+            onChange={setImages}
+          />
+        </SectionCard>
+
+        {/* ── Información básica ────────────────────────────────────────── */}
         <SectionCard title="Información básica" icon="📋">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <FormField label="Nombre del perfume" required>
@@ -322,12 +384,24 @@ export default function EditarProductoPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <FormField label="Marca" required>
-              <select id="edit-marca" value={marcaId} onChange={e => setMarcaId(e.target.value)} style={selectStyle}>
+              <select
+                id="edit-marca"
+                value={marcaId}
+                onChange={e => setMarcaId(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">— Seleccionar marca —</option>
                 {marcas.map(m => <option key={m.id} value={m.id}>{m.nombre}</option>)}
               </select>
             </FormField>
             <FormField label="Categoría" required>
-              <select id="edit-categoria" value={categoriaId} onChange={e => setCategoriaId(e.target.value)} style={selectStyle}>
+              <select
+                id="edit-categoria"
+                value={categoriaId}
+                onChange={e => setCategoriaId(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">— Seleccionar categoría —</option>
                 {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
               </select>
             </FormField>
@@ -343,17 +417,53 @@ export default function EditarProductoPage() {
           </FormField>
         </SectionCard>
 
-        {/* Características */}
+        {/* ── Notas olfativas ──────────────────────────────────────────── */}
+        <SectionCard title="Notas olfativas" icon="🌸">
+          <NoteTagSelector
+            value={selectedNotes}
+            onChange={setSelectedNotes}
+            label="Seleccionar notas por familia"
+          />
+          <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginTop: 10 }}>
+            Las notas se organizan en Salida (top), Corazón y Fondo. Selecciona todas las que apliquen.
+          </p>
+        </SectionCard>
+
+        {/* ── Características ──────────────────────────────────────────── */}
         <SectionCard title="Características" icon="🏷️">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-            <CheckToggle id="edit-activo" label="Activo (visible en tienda)" checked={activo} onChange={setActivo} />
+            <CheckToggle
+              id="edit-activo"
+              label="Activo (visible en tienda)"
+              checked={activo}
+              onChange={v => {
+                if (v && !hasImages) {
+                  showToast('Sube al menos una imagen antes de activar el producto', 'error');
+                  return;
+                }
+                setActivo(v);
+              }}
+              disabled={!canActivate && !activo}
+              disabledHint="Sube al menos una imagen para poder activar este producto"
+            />
             <CheckToggle id="edit-destacado" label="Destacado" checked={destacado} onChange={setDestacado} />
             <CheckToggle id="edit-arabe" label="Árabe / Oriental" checked={esArabe} onChange={setEsArabe} />
             <CheckToggle id="edit-nuevo" label="Nuevo en catálogo" checked={esNuevo} onChange={setEsNuevo} />
           </div>
+
+          {/* Inline warning when product is active but now has no images */}
+          {activo && !hasImages && (
+            <div style={{
+              marginTop: 12, background: '#fef2f2', border: '1px solid #fca5a5',
+              borderRadius: 8, padding: '10px 14px',
+              fontSize: '0.78rem', color: '#dc2626', fontWeight: 600,
+            }}>
+              ⚠️ Este producto está activo pero no tiene imágenes. Al guardar quedará inactivo automáticamente.
+            </div>
+          )}
         </SectionCard>
 
-        {/* Presentaciones */}
+        {/* ── Presentaciones y stock ───────────────────────────────────── */}
         <SectionCard title="Presentaciones y stock" icon="💧">
           <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: 16 }}>
             Puedes guardar cambios de precio/stock individualmente o con el botón principal.
@@ -375,7 +485,7 @@ export default function EditarProductoPage() {
                     value={pres.tamano_ml}
                     onChange={e => updatePresentacion(idx, 'tamano_ml', e.target.value)}
                     style={pres.id && !pres.isNew ? { ...inputStyle, background: '#f4f1ed' } : inputStyle}
-                    readOnly={!!(pres.id && !pres.isNew)} // Can't change size of existing presentations
+                    readOnly={!!(pres.id && !pres.isNew)}
                   />
                 </FormField>
                 <FormField label="Precio ($)">
@@ -396,7 +506,6 @@ export default function EditarProductoPage() {
                     style={inputStyle}
                   />
                 </FormField>
-                {/* Quick save for existing presentation */}
                 <div style={{ paddingBottom: 2 }}>
                   {pres.id && !pres.isNew && (
                     <button
