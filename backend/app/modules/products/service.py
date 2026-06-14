@@ -342,7 +342,22 @@ async def update_product(
         product.es_nuevo = data.es_nuevo
 
     await db.commit()
-    return await get_product_by_slug(db, product.slug)
+    # Re-fetch by ID (not slug) so the response works even when activo=False.
+    # get_product_by_slug filters activo=True and would return 404 for a
+    # product that was just inactivated — which is the exact operation that
+    # the admin panel performs when removing images and saving.
+    result = await db.execute(
+        select(Perfume)
+        .where(Perfume.id == product_id)
+        .options(
+            selectinload(Perfume.marca),
+            selectinload(Perfume.categoria),
+            selectinload(Perfume.presentaciones),
+            selectinload(Perfume.imagenes),
+            selectinload(Perfume.perfume_notas).selectinload(PerfumeNota.nota),
+        )
+    )
+    return result.scalar_one()
 
 
 async def delete_product(db: AsyncSession, product_id: uuid.UUID) -> None:
