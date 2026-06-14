@@ -247,12 +247,17 @@ export default function EditarProductoPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!nombre.trim()) { showToast('El nombre es obligatorio', 'error'); return; }
-    if (activo && !hasImages) {
-      showToast('Debes subir al menos una imagen para activar el producto', 'error');
-      return;
-    }
 
     setSaving(true);
+
+    // Auto-inactivate if the product has no images — the backend enforces
+    // this rule too (409 Conflict), but we handle it gracefully on the
+    // frontend instead of showing a raw error to the admin.
+    const effectiveActivo = activo && hasImages;
+    if (activo && !hasImages) {
+      showToast('Sin imágenes — el producto se guardará como inactivo', 'error');
+    }
+
     try {
       // 1. Update product metadata
       await adminFetch(`/admin/products/${productId}`, {
@@ -263,7 +268,7 @@ export default function EditarProductoPage() {
           categoria_id: categoriaId,
           genero,
           descripcion: descripcion.trim() || null,
-          activo,
+          activo: effectiveActivo,
           destacado,
           es_arabe: esArabe,
           es_nuevo: esNuevo,
