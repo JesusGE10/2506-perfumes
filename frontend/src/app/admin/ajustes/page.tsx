@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react';
 import { adminFetch } from '@/lib/api';
 import { useAdminSettingsStore } from '@/store/adminSettingsStore';
+import AvatarUploader from '@/components/admin/AvatarUploader';
 import type { AdminUser } from '@/lib/types';
 import styles from '../admin.module.css';
 
@@ -120,6 +121,7 @@ export default function AdminAjustesPage() {
   const [profileNombre, setProfileNombre] = useState('');
   const [profileFoto, setProfileFoto] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   // Password form
   const [pwCurrent, setPwCurrent] = useState('');
@@ -259,19 +261,21 @@ export default function AdminAjustesPage() {
       {/* === Sección: Perfil ===*/}
       <SectionCard title="Perfil de administrador" icon="👤">
         <form onSubmit={handleSaveProfile}>
-          {/* Avatar preview */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-            <div style={{
-              width: 64, height: 64, borderRadius: '50%',
-              background: '#e8e3dc', border: '2px solid #d9d4cd',
-              overflow: 'hidden', flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              {profileFoto ? (
-                <img src={profileFoto} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <span style={{ fontSize: '1.6rem' }}>👤</span>
-              )}
+          {/* Avatar — binary uploader */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24 }}>
+            <div style={{ flexShrink: 0 }}>
+              <AvatarUploader
+                currentUrl={profileFoto || null}
+                nombre={profileNombre || admin?.nombre}
+                onSuccess={(url) => {
+                  setProfileFoto(url);
+                  setAdmin((prev) => prev ? { ...prev, foto_perfil_url: url } : prev);
+                  setAdminProfile(profileNombre || admin?.nombre || '', url);
+                  setAvatarError(null);
+                  showToast('Foto de perfil actualizada');
+                }}
+                onError={(msg) => setAvatarError(msg)}
+              />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: '1rem' }}>{admin?.nombre}</div>
@@ -285,6 +289,14 @@ export default function AdminAjustesPage() {
               }}>
                 {admin?.rol === 'super_admin' ? '⭐ Super Admin' : 'Admin'}
               </span>
+              {avatarError && (
+                <p style={{ fontSize: '0.72rem', color: '#dc2626', marginTop: 6, maxWidth: 220 }}>
+                  ⚠️ {avatarError}
+                </p>
+              )}
+              <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: 6 }}>
+                Haz clic en la foto para cambiarla
+              </p>
             </div>
           </div>
 
@@ -309,16 +321,6 @@ export default function AdminAjustesPage() {
             </FormField>
           </div>
 
-          <FormField label="URL de foto de perfil" hint="Sube tu imagen a un servicio como imgur.com y pega aquí la URL directa">
-            <input
-              id="ajustes-foto-url"
-              type="url"
-              value={profileFoto}
-              onChange={e => setProfileFoto(e.target.value)}
-              style={inputStyle}
-              placeholder="https://i.imgur.com/tu-foto.jpg"
-            />
-          </FormField>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
             <SaveButton loading={savingProfile} label="Guardar perfil" />

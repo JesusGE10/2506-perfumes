@@ -1,6 +1,6 @@
 """HTTP router for admin authentication and profile management."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies import get_current_admin, get_current_superadmin, get_db
@@ -16,8 +16,11 @@ from app.modules.auth.schemas import (
     LoginRequest,
     TokenResponse,
 )
+from app.modules.media.optimizer import optimize_avatar, validate_upload
+from app.modules.media.r2_client import upload_admin_avatar
 
 router = APIRouter(tags=["auth"])
+
 
 
 # ─── Login / Token ────────────────────────────────────────────────────────────
@@ -51,6 +54,32 @@ async def update_profile(
 ):
     """Update admin's display name and/or profile photo URL."""
     user = await service.update_profile(db, payload["sub"], data)
+    return user
+
+
+@router.post("/auth/me/avatar", response_model=AdminResponse)
+async def upload_avatar(
+    file: UploadFile = File(...),
+    payload: dict = Depends(get_current_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Upload a profile picture binary.
+
+    Accepts any image format (JPEG, PNG, WebP, GIF), optimizes it to WebP
+    256×256 max via Pillow, stores it in Cloudflare R2 under
+    ``avatars/{admin_id}.webp`` (deterministic key — overwrites on re-upload),
+    and persists the public CDN URL in ``admin_user.foto_perfil_url``.
+    """
+    raw = await file.read()
+    validate_upload(raw, file.content_type or "")
+    webp_bytes = await optimize_avatar(raw)
+    public_url, _ = await upload_admin_avatar(payload["sub"], webp_bytes)
+    user = await service.update_profile(
+        db,
+        payload["sub"],
+        AdminProfileUpdate(foto_perfil_url=public_url),
+    )
     return user
 
 
